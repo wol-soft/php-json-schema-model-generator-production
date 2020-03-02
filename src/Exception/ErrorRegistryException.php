@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace PHPModelGeneratorException;
+namespace PHPModelGenerator\Exception;
 
 use Exception;
 

@@ -1,7 +1,7 @@
 {
-    "name": "wol-soft/php-json-schema-model-generator-exception",
-    "homepage": "https://github.com/wol-soft/php-json-schema-model-generator-exception",
-    "description": "Provides exceptions to use php-json-schema-model-generator as dev dependency\n\n",
+    "name": "wol-soft/php-json-schema-model-generator-production",
+    "homepage": "https://github.com/wol-soft/php-json-schema-model-generator-production",
+    "description": "Provides the production code required to use php-json-schema-model-generator as dev dependency",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -18,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "PHPModelGeneratorException\\": "src"
+            "PHPModelGenerator\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "PHPModelGeneratorException\\Tests\\": "tests"
+            "PHPModelGenerator\\Tests\\": "tests"
         }
     }
 }

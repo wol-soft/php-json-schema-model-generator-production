@@ -2,7 +2,7 @@
 
 namespace PHPModelGeneratorException\Tests;
 
-use PHPModelGeneratorException\ValidationException;
+use PHPModelGenerator\Exception\ValidationException;
 use PHPUnit\Framework\TestCase;
 
 /**

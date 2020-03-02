@@ -2,7 +2,7 @@
 
 namespace PHPModelGeneratorException\Tests;
 
-use PHPModelGeneratorException\ErrorRegistryException;
+use PHPModelGenerator\Exception\ErrorRegistryException;
 use PHPUnit\Framework\TestCase;
 
 /**
