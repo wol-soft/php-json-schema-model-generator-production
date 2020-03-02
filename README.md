@@ -5,5 +5,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/wol-soft/php-json-schema-model-generator-exception/badge.svg?branch=master)](https://coveralls.io/github/wol-soft/php-json-schema-model-generator-exception?branch=master)
 [![MIT License](https://img.shields.io/packagist/l/wol-soft/php-micro-template.svg)](https://github.com/wol-soft/php-json-schema-model-generator-exception/blob/master/LICENSE)
 
-# php-json-schema-model-generator-interface
+# php-json-schema-model-generator-production
 Provides exceptions and interfaces to use [php-json-schema-model-generator](https://github.com/wol-soft/php-json-schema-model-generator) as dev dependency (recommended workflow)
