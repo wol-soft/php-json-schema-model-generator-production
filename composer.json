@@ -18,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "PHPModelGenerator\\": "src"
+            "PHPModelGeneratorProduction\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "PHPModelGenerator\\Tests\\": "tests"
+            "PHPModelGeneratorProduction\\Tests\\": "tests"
         }
     }
 }

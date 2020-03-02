@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPModelGenerator\Interfaces;
+namespace PHPModelGeneratorProduction\Interfaces;
 
 interface SerializationInterface
 {

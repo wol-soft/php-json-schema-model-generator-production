@@ -1,8 +1,8 @@
 <?php
 
-namespace PHPModelGeneratorException\Tests;
+namespace PHPModelGeneratorProduction\Tests;
 
-use PHPModelGenerator\Exception\ValidationException;
+use PHPModelGeneratorProduction\Exception\ValidationException;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace PHPModelGenerator\Exception;
+namespace PHPModelGeneratorProduction\Exception;
 
 use Throwable;
 
