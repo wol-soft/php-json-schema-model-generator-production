@@ -4,14 +4,12 @@ declare(strict_types = 1);
 
 namespace PHPModelGenerator\Exception;
 
-use Exception;
-
 /**
  * Class ErrorRegistryException
  *
  * @package PHPModelGeneratorException
  */
-class ErrorRegistryException extends Exception implements ErrorRegistryExceptionInterface
+class ErrorRegistryException extends JSONModelValidationException implements ErrorRegistryExceptionInterface
 {
     protected $errors = [];
 

@@ -1,7 +1,14 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace PHPModelGenerator\Interfaces;
 
+/**
+ * Interface SerializationInterface
+ *
+ * @package PHPModelGenerator\Interfaces
+ */
 interface SerializationInterface
 {
     /**
