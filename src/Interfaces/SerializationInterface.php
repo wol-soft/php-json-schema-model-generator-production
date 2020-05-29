@@ -12,16 +12,21 @@ namespace PHPModelGenerator\Interfaces;
 interface SerializationInterface
 {
     /**
-     * Converts the object into an array
+     * Get an array representation of the current state
      *
-     * @return array
+     * @param int $depth the maximum level of object nesting. Must be greater than 0
+     *
+     * @return array|false
      */
-    public function toArray(): array;
+    public function toArray(int $depth = 512);
 
     /**
-     * Converts the object into a JSON serialized string
+     * Get a JSON representation of the current state
      *
-     * @return string
+     * @param int $options Bitmask for json_encode
+     * @param int $depth   the maximum level of object nesting. Must be greater than 0
+     *
+     * @return string|false
      */
-    public function toJSON(): string;
+    public function toJSON(int $options = 0, int $depth = 512);
 }
