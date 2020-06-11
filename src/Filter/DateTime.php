@@ -33,9 +33,26 @@ class DateTime
                 throw new ValidationException("Can't process an empty date value");
             }
 
+            if ($options['createFromFormat'] ?? false && $value !== null) {
+                return \DateTime::createFromFormat($options['createFromString'], $value);
+            }
+
             return $value !== null ? new \DateTime($value) : null;
         } catch (Exception $e) {
-            throw new ValidationException('Invalid Date Time value', $e);
+            throw new ValidationException("Invalid Date Time value $value", $e);
         }
+    }
+
+    /**
+     * @param \DateTime|null $value
+     * @param array $options
+     *
+     * @return string|null
+     */
+    public static function serialize(?\DateTime $value, array $options = []): ?string
+    {
+        return ($value instanceof \DateTime)
+            ? $value->format($options['outputFormat'] ?? $options['createFromFormat'] ?? DATE_ISO8601)
+            : null;
     }
 }
