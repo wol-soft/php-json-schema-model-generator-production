@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPModelGenerator\Tests;
+namespace PHPModelGenerator\Tests\Exception;
 
 use PHPModelGenerator\Exception\ValidationException;
 use PHPUnit\Framework\TestCase;
