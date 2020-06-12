@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPModelGenerator\Tests;
+namespace PHPModelGenerator\Tests\Exception;
 
 use PHPModelGenerator\Exception\ErrorRegistryException;
 use PHPUnit\Framework\TestCase;

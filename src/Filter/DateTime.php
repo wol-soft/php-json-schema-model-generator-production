@@ -25,21 +25,25 @@ class DateTime
     public static function filter(?string $value, array $options = []): ?\DateTime
     {
         try {
-            if ($options['convertNullToNow'] ?? false && $value === null) {
+            if (($options['convertNullToNow'] ?? false) && $value === null) {
                 return new \DateTime();
             }
 
-            if ($options['denyEmptyValue'] ?? false && $value === '') {
+            if (($options['denyEmptyValue'] ?? false) && $value === '') {
                 throw new ValidationException("Can't process an empty date value");
             }
 
-            if ($options['createFromFormat'] ?? false && $value !== null) {
-                return \DateTime::createFromFormat($options['createFromString'], $value);
+            if (($options['convertEmptyValueToNull'] ?? false) && $value === '') {
+                return null;
+            }
+
+            if (($options['createFromFormat'] ?? false) && $value !== null) {
+                return \DateTime::createFromFormat($options['createFromFormat'], $value);
             }
 
             return $value !== null ? new \DateTime($value) : null;
         } catch (Exception $e) {
-            throw new ValidationException("Invalid Date Time value $value", $e);
+            throw new ValidationException("Invalid Date Time value \"$value\"");
         }
     }
 
