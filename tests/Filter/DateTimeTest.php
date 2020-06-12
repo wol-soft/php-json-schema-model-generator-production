@@ -83,8 +83,9 @@ class DateTimeTest extends TestCase
 
     public function testSerializeDefaultFormat(): void
     {
-        $dateTime = new DateTime();
+        $this->assertNull(DateTimeFilter::serialize(null));
 
+        $dateTime = new DateTime();
         $this->assertSame($dateTime->format(DATE_ISO8601), DateTimeFilter::serialize($dateTime));
     }
 
