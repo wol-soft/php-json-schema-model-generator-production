@@ -24,6 +24,8 @@ class DateTime
      */
     public static function filter(?string $value, array $options = []): ?\DateTime
     {
+        static::convertConstants($options);
+
         try {
             if (($options['convertNullToNow'] ?? false) && $value === null) {
                 return new \DateTime();
@@ -38,7 +40,13 @@ class DateTime
             }
 
             if (($options['createFromFormat'] ?? false) && $value !== null) {
-                return \DateTime::createFromFormat($options['createFromFormat'], $value);
+                $result = \DateTime::createFromFormat($options['createFromFormat'], $value);
+
+                if (!$result) {
+                    throw new Exception();
+                }
+
+                return $result;
             }
 
             return $value !== null ? new \DateTime($value) : null;
@@ -55,8 +63,24 @@ class DateTime
      */
     public static function serialize(?\DateTime $value, array $options = []): ?string
     {
+        static::convertConstants($options);
+
         return ($value instanceof \DateTime)
             ? $value->format($options['outputFormat'] ?? $options['createFromFormat'] ?? DATE_ISO8601)
             : null;
+    }
+
+    /**
+     * Make DATE constants available
+     *
+     * @param array $options
+     */
+    protected static function convertConstants(array &$options): void
+    {
+        foreach (['createFromFormat', 'outputFormat'] as $format) {
+            if (isset($options[$format]) && defined("DATE_{$options[$format]}")) {
+                $options[$format] = constant("DATE_{$options[$format]}");
+            }
+        }
     }
 }

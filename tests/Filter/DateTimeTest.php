@@ -81,6 +81,15 @@ class DateTimeTest extends TestCase
         );
     }
 
+    public function testCreateFromFormatOptionWithFormatConstant(): void
+    {
+        $dateTime = new DateTime();
+        $this->assertSame(
+            $dateTime->format(DATE_ATOM),
+            DateTimeFilter::filter($dateTime->format(DATE_RSS), ['createFromFormat' => 'RSS'])->format(DATE_ATOM)
+        );
+    }
+
     public function testSerializeDefaultFormat(): void
     {
         $this->assertNull(DateTimeFilter::serialize(null));
@@ -106,6 +115,26 @@ class DateTimeTest extends TestCase
         $this->assertSame(
             $dateTime->format('Ymd'),
             DateTimeFilter::serialize($dateTime, ['createFromFormat' => 'mdY', 'outputFormat' => 'Ymd'])
+        );
+    }
+
+    public function testSerializeWithCreateFromFormatWithFormatConstant(): void
+    {
+        $dateTime = new DateTime();
+
+        $this->assertSame(
+            $dateTime->format(DATE_RSS),
+            DateTimeFilter::serialize($dateTime, ['createFromFormat' => 'RSS'])
+        );
+    }
+
+    public function testSerializeWithOutputFormatWithFormatConstant(): void
+    {
+        $dateTime = new DateTime();
+
+        $this->assertSame(
+            $dateTime->format(DATE_RSS),
+            DateTimeFilter::serialize($dateTime, ['createFromFormat' => 'ATOM', 'outputFormat' => 'RSS'])
         );
     }
 }
