@@ -88,4 +88,12 @@ trait SerializableTrait
                 : get_object_vars($attribute)
             );
     }
+
+    /**
+     * Return a JSON serializable representation of the current state
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
+    }
 }
