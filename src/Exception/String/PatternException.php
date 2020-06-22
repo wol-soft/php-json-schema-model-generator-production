@@ -13,9 +13,17 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class PatternException extends ValidationException
 {
+    /** @var string */
     protected $expectedPattern;
 
-    public function __construct(string $propertyName, $providedValue, string $expectedPattern)
+    /**
+     * PatternException constructor.
+     *
+     * @param $providedValue
+     * @param string $propertyName
+     * @param string $expectedPattern
+     */
+    public function __construct($providedValue, string $propertyName, string $expectedPattern)
     {
         $this->expectedPattern = $expectedPattern;
 

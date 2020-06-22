@@ -9,9 +9,11 @@ namespace PHPModelGenerator\Exception;
  *
  * @package PHPModelGeneratorException
  */
-class ValidationException extends JSONModelValidationException
+abstract class ValidationException extends JSONModelValidationException
 {
+    /** @var string */
     protected $propertyName;
+    /** @var mixed */
     protected $providedValue;
 
     /**
