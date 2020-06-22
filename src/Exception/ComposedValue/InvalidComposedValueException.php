@@ -49,7 +49,7 @@ abstract class InvalidComposedValueException extends ValidationException
     }
 
     /**
-     * @return ValidationException[]
+     * @return ValidationException[][]
      */
     public function getCompositionErrorCollection(): array
     {
