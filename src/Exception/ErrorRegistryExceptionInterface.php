@@ -25,7 +25,7 @@ interface ErrorRegistryExceptionInterface extends Throwable
     /**
      * Get all errors
      *
-     * @return array
+     * @return ValidationException[]
      */
     public function getErrors(): array;
 }
