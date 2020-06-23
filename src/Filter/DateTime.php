@@ -16,11 +16,11 @@ class DateTime
 {
     /**
      * @param string|null $value
-     * @param array $options
+     * @param array       $options
      *
      * @return \DateTime|null
      *
-     * @throws ValidationException
+     * @throws Exception
      */
     public static function filter(?string $value, array $options = []): ?\DateTime
     {
@@ -32,7 +32,7 @@ class DateTime
             }
 
             if (($options['denyEmptyValue'] ?? false) && $value === '') {
-                throw new ValidationException("Can't process an empty date value");
+                throw new Exception("Can't process an empty date value");
             }
 
             if (($options['convertEmptyValueToNull'] ?? false) && $value === '') {
@@ -51,7 +51,7 @@ class DateTime
 
             return $value !== null ? new \DateTime($value) : null;
         } catch (Exception $e) {
-            throw new ValidationException("Invalid Date Time value \"$value\"");
+            throw new Exception("Invalid Date Time value \"$value\"", 0, $e);
         }
     }
 

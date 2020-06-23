@@ -11,5 +11,5 @@ namespace PHPModelGenerator\Exception\ComposedValue;
  */
 class AllOfException extends InvalidComposedValueException
 {
-    protected const COMPOSED_ERROR_MESSAGE = 'Requires to match %s composition elements but matched %s elements.';
+    protected const COMPOSED_ERROR_MESSAGE = 'Requires to match all composition elements but matched %s elements.';
 }

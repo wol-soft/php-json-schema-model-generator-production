@@ -27,7 +27,7 @@ class InvalidItemException extends ValidationException
     {
         $this->invalidItems = $invalidItems;
 
-        parent::__construct($this->getErrorMessage(), $propertyName, $providedValue);
+        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
     }
 
     /**
@@ -38,9 +38,9 @@ class InvalidItemException extends ValidationException
         return $this->invalidItems;
     }
 
-    protected function getErrorMessage(): string
+    protected function getErrorMessage(string $propertyName): string
     {
-        $output = "Invalid items in array {$this->propertyName}:";
+        $output = "Invalid items in array $propertyName:";
         foreach ($this->invalidItems as $itemIndex => $exceptions) {
             $output .= "\n  - invalid item #$itemIndex\n    * " .
                 implode(

@@ -37,7 +37,7 @@ abstract class InvalidComposedValueException extends ValidationException
         $this->succeededCompositionElements = $succeededCompositionElements;
         $this->compositionErrorCollection = $compositionErrorCollection;
 
-        parent::__construct($this->getErrorMessage(), $propertyName, $providedValue);
+        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
     }
 
     /**
@@ -56,11 +56,11 @@ abstract class InvalidComposedValueException extends ValidationException
         return $this->compositionErrorCollection;
     }
 
-    protected function getErrorMessage(): string
+    protected function getErrorMessage(string $propertyName): string
     {
         $compositionIndex = 0;
 
-        return "Invalid value for {$this->propertyName} declined by composition constraint.\n" .
+        return "Invalid value for $propertyName declined by composition constraint.\n  " .
             sprintf(static::COMPOSED_ERROR_MESSAGE, $this->succeededCompositionElements) .
             array_reduce(
                 $this->compositionErrorCollection,

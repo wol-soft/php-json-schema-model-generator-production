@@ -28,9 +28,9 @@ class InvalidAdditionalPropertiesException extends ValidationException
      */
     public function __construct($providedValue, string $propertyName, $nestedExceptions)
     {
-        $this->nestedExceptions= $nestedExceptions;
+        $this->nestedExceptions = $nestedExceptions;
 
-        parent::__construct($this->getErrorMessage(), $propertyName, $providedValue);
+        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
     }
 
     /**
@@ -43,14 +43,14 @@ class InvalidAdditionalPropertiesException extends ValidationException
         return $this->nestedExceptions;
     }
 
-    protected function getErrorMessage(): string
+    protected function getErrorMessage(string $propertyName): string
     {
         $output = '';
-        foreach ($this->nestedExceptions as $propertyName => $exceptions) {
+        foreach ($this->nestedExceptions as $nestedPropertyName => $exceptions) {
             $output .= sprintf(
                 "\n  - invalid %s '%s'\n    * %s",
-                self::TYPE,
-                $propertyName,
+                static::TYPE,
+                $nestedPropertyName,
                 implode(
                     "\n    * ",
                     str_replace(
@@ -64,6 +64,6 @@ class InvalidAdditionalPropertiesException extends ValidationException
             );
         }
 
-        return sprintf(static::MAIN_MESSAGE, $this->propertyName) . $output;
+        return sprintf(static::MAIN_MESSAGE, $propertyName) . $output;
     }
 }
