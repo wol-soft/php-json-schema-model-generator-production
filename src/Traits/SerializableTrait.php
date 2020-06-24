@@ -16,28 +16,32 @@ trait SerializableTrait
     /**
      * Get a JSON representation of the current state
      *
-     * @param int $options Bitmask for json_encode
-     * @param int $depth   the maximum level of object nesting. Must be greater than 0
+     * @param array $except provide a list of properties which shouldn't be contained in the resulting JSON.
+     *                      eg. if you want to return an user model and don't want the password to be included
+     * @param int $options  Bitmask for json_encode
+     * @param int $depth    the maximum level of object nesting. Must be greater than 0
      *
      * @return string|false
      */
-    public function toJSON(int $options = 0, int $depth = 512)
+    public function toJSON(array $except = [], int $options = 0, int $depth = 512)
     {
         if ($depth < 1) {
             return false;
         }
 
-        return json_encode($this->toArray($depth), $options, $depth);
+        return json_encode($this->toArray($except, $depth), $options, $depth);
     }
 
     /**
      * Get an array representation of the current state
      *
-     * @param int $depth the maximum level of object nesting. Must be greater than 0
+     * @param array $except provide a list of properties which shouldn't be contained in the resulting JSON.
+     *                      eg. if you want to return an user model and don't want the password to be included
+     * @param int $depth    the maximum level of object nesting. Must be greater than 0
      *
      * @return array|false
      */
-    public function toArray(int $depth = 512)
+    public function toArray(array $except = [], int $depth = 512)
     {
         if ($depth < 1) {
             return false;
@@ -45,27 +49,28 @@ trait SerializableTrait
 
         $depth--;
         $modelData = [];
+        array_push($except, 'rawModelDataInput', 'errorRegistry');
 
         foreach (get_object_vars($this) as $key => $value) {
-            if (in_array($key, ['rawModelDataInput', 'errorRegistry'])) {
+            if (in_array($key, $except)) {
                 continue;
             }
 
             if (is_array($value)) {
                 $subData = [];
                 foreach ($value as $subKey => $element) {
-                    $subData[$subKey] = $this->evaluateAttribute($key, $element, $depth);
+                    $subData[$subKey] = $this->evaluateAttribute($key, $element, $depth, $except);
                 }
                 $modelData[$key] = $subData;
             } else {
-                $modelData[$key] = $this->evaluateAttribute($key, $value, $depth);
+                $modelData[$key] = $this->evaluateAttribute($key, $value, $depth, $except);
             }
         }
 
         return $modelData;
     }
 
-    private function evaluateAttribute(string $property, $attribute, int $depth)
+    private function evaluateAttribute(string $property, $attribute, int $depth, array $except)
     {
         $customSerializer = 'serialize' . ucfirst($property);
         if (method_exists($this, $customSerializer)) {
@@ -84,7 +89,7 @@ trait SerializableTrait
             ? null
             : (
             method_exists($attribute, 'toArray')
-                ? $attribute->toArray($depth - 1)
+                ? $attribute->toArray($except, $depth - 1)
                 : get_object_vars($attribute)
             );
     }

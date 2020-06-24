@@ -3,7 +3,7 @@
 namespace PHPModelGenerator\Tests\Filter;
 
 use DateTime;
-use PHPModelGenerator\Exception\ValidationException;
+use Exception;
 use PHPModelGenerator\Filter\DateTime as DateTimeFilter;
 use PHPUnit\Framework\TestCase;
 
@@ -43,7 +43,7 @@ class DateTimeTest extends TestCase
 
     public function testInvalidDateTimeThrowsAnException(): void
     {
-        $this->expectException(ValidationException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Invalid Date Time value "Hello"');
 
         DateTimeFilter::filter("Hello");
@@ -67,7 +67,7 @@ class DateTimeTest extends TestCase
         // check if null is accepted if the option is set
         $this->assertNull(DateTimeFilter::filter(null, ['denyEmptyValue' => true]));
 
-        $this->expectException(ValidationException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('Invalid Date Time value ""');
 
         DateTimeFilter::filter('', ['denyEmptyValue' => true]);
