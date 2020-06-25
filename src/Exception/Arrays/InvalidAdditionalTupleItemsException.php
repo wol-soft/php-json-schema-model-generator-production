@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace PHPModelGenerator\Exception\Arrays;
 
-use PHPModelGenerator\Exception\Generic\InvalidAdditionalPropertiesException;
+use PHPModelGenerator\Exception\Object\InvalidAdditionalPropertiesException;
 
 /**
  * Class InvalidAdditionalTupleItemsException
