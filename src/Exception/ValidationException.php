@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace PHPModelGenerator\Exception;
 
+use Throwable;
+
 /**
  * Class ValidationException
  *
@@ -21,16 +23,21 @@ abstract class ValidationException extends JSONModelValidationException
      *
      * @param string $message
      * @param string $propertyName
-     * @param mixed  $providedValue
+     * @param mixed $providedValue
+     * @param int $code
+     * @param Throwable|null $previous
      */
-    public function __construct(string $message, string $propertyName, $providedValue)
-    {
+    public function __construct(
+        string $message,
+        string $propertyName,
+        $providedValue,
+        $code = 0,
+        Throwable $previous = null
+    ) {
         $this->propertyName = $propertyName;
         $this->providedValue = $providedValue;
 
-        $this->message = $message;
-
-        parent::__construct();
+        parent::__construct($message, $code, $previous);
     }
 
     /**
