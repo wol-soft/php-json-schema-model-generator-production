@@ -2,16 +2,16 @@
 
 declare(strict_types = 1);
 
-namespace PHPModelGenerator\Exception\Generic;
+namespace PHPModelGenerator\Exception\Object;
 
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
- * Class MissingRequiredValueException
+ * Class RequiredValueException
  *
- * @package PHPModelGenerator\Exception\Generic
+ * @package PHPModelGenerator\Exception\Object
  */
-class MissingRequiredValueException extends ValidationException
+class RequiredValueException extends ValidationException
 {
     /**
      * MissingRequiredValueException constructor.

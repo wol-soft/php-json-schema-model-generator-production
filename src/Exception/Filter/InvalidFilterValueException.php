@@ -2,22 +2,20 @@
 
 declare(strict_types = 1);
 
-namespace PHPModelGenerator\Exception\Generic;
+namespace PHPModelGenerator\Exception\Filter;
 
-use Exception;
 use PHPModelGenerator\Exception\ValidationException;
+use Throwable;
 
 /**
  * Class InvalidFilterValueException
  *
- * @package PHPModelGenerator\Exception\Generic
+ * @package PHPModelGenerator\Exception\Filter
  */
 class InvalidFilterValueException extends ValidationException
 {
     /** @var string */
     protected $filterToken;
-    /** @var Exception */
-    protected $filterException;
 
     /**
      * InvalidFilterValueException constructor.
@@ -25,12 +23,11 @@ class InvalidFilterValueException extends ValidationException
      * @param           $providedValue
      * @param string    $propertyName
      * @param string    $filterToken
-     * @param Exception $filterException
+     * @param Throwable $filterException
      */
-    public function __construct($providedValue, string $propertyName, string $filterToken, Exception $filterException)
+    public function __construct($providedValue, string $propertyName, string $filterToken, Throwable $filterException)
     {
         $this->filterToken = $filterToken;
-        $this->filterException = $filterException;
 
         parent::__construct(
             sprintf(
@@ -40,7 +37,9 @@ class InvalidFilterValueException extends ValidationException
                 $filterException->getMessage()
             ),
             $propertyName,
-            $providedValue
+            $providedValue,
+            0,
+            $filterException
         );
     }
 
@@ -53,10 +52,10 @@ class InvalidFilterValueException extends ValidationException
     }
 
     /**
-     * @return Exception
+     * @return Throwable
      */
-    public function getFilterException(): Exception
+    public function getFilterException(): Throwable
     {
-        return $this->filterException;
+        return $this->getPrevious();
     }
 }

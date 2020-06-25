@@ -2,14 +2,14 @@
 
 declare(strict_types = 1);
 
-namespace PHPModelGenerator\Exception\Generic;
+namespace PHPModelGenerator\Exception\Filter;
 
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
  * Class IncompatibleFilterException
  *
- * @package PHPModelGenerator\Exception\Generic
+ * @package PHPModelGenerator\Exception\Filter
  */
 class IncompatibleFilterException extends ValidationException
 {

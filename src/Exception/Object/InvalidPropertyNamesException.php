@@ -2,12 +2,12 @@
 
 declare(strict_types = 1);
 
-namespace PHPModelGenerator\Exception\Generic;
+namespace PHPModelGenerator\Exception\Object;
 
 /**
  * Class InvalidPropertyNamesException
  *
- * @package PHPModelGenerator\Exception\Generic
+ * @package PHPModelGenerator\Exception\Object
  */
 class InvalidPropertyNamesException extends InvalidAdditionalPropertiesException
 {

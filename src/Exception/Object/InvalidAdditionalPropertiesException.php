@@ -2,14 +2,14 @@
 
 declare(strict_types = 1);
 
-namespace PHPModelGenerator\Exception\Generic;
+namespace PHPModelGenerator\Exception\Object;
 
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
  * Class InvalidAdditionalPropertiesException
  *
- * @package PHPModelGenerator\Exception\Generic
+ * @package PHPModelGenerator\Exception\Object
  */
 class InvalidAdditionalPropertiesException extends ValidationException
 {

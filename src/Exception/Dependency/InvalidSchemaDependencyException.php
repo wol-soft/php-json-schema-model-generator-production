@@ -4,8 +4,8 @@ declare(strict_types = 1);
 
 namespace PHPModelGenerator\Exception\Dependency;
 
-use Exception;
 use PHPModelGenerator\Exception\ValidationException;
+use Throwable;
 
 /**
  * Class InvalidSchemaDependencyException
@@ -14,7 +14,7 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class InvalidSchemaDependencyException extends ValidationException
 {
-    /** @var Exception */
+    /** @var Throwable */
     protected $dependencyException;
 
     /**
@@ -22,9 +22,9 @@ class InvalidSchemaDependencyException extends ValidationException
      *
      * @param           $providedValue
      * @param string    $propertyName
-     * @param Exception $dependencyException
+     * @param Throwable $dependencyException
      */
-    public function __construct($providedValue, string $propertyName, Exception $dependencyException)
+    public function __construct($providedValue, string $propertyName, Throwable $dependencyException)
     {
         $this->dependencyException = $dependencyException;
 
@@ -41,9 +41,9 @@ class InvalidSchemaDependencyException extends ValidationException
     }
 
     /**
-     * @return Exception
+     * @return Throwable
      */
-    public function getDependencyException(): Exception
+    public function getDependencyException(): Throwable
     {
         return $this->dependencyException;
     }
