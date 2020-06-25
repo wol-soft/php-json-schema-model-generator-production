@@ -16,16 +16,16 @@ interface ErrorRegistryExceptionInterface extends Throwable
     /**
      * Add an error to the error registry
      *
-     * @param string $message
+     * @param ValidationException $exception
      *
      * @return $this
      */
-    public function addError(string $message): self;
+    public function addError(ValidationException $exception): self;
 
     /**
      * Get all errors
      *
-     * @return array
+     * @return ValidationException[]
      */
     public function getErrors(): array;
 }

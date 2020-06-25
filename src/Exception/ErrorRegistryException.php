@@ -16,11 +16,19 @@ class ErrorRegistryException extends JSONModelValidationException implements Err
     /**
      * @inheritdoc
      */
-    public function addError(string $message): ErrorRegistryExceptionInterface
+    public function addError(ValidationException $exception): ErrorRegistryExceptionInterface
     {
-        $this->errors[] = $message;
+        $this->errors[] = $exception;
 
-        $this->message = join("\n", $this->errors);
+        $this->message = join(
+            "\n",
+            array_map(
+                function (ValidationException $e): string {
+                    return $e->getMessage();
+                },
+                $this->errors
+            )
+        );
 
         return $this;
     }
