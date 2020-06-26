@@ -78,8 +78,8 @@ class DateTime
     protected static function convertConstants(array &$options): void
     {
         foreach (['createFromFormat', 'outputFormat'] as $format) {
-            if (isset($options[$format]) && defined("DATE_{$options[$format]}")) {
-                $options[$format] = constant("DATE_{$options[$format]}");
+            if (isset($options[$format]) && defined("\DateTime::{$options[$format]}")) {
+                $options[$format] = constant("\DateTime::{$options[$format]}");
             }
         }
     }
