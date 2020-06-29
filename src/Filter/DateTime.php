@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace PHPModelGenerator\Filter;
 
 use Exception;
-use PHPModelGenerator\Exception\ValidationException;
 
 /**
  * Class DateTime
@@ -77,9 +76,20 @@ class DateTime
      */
     protected static function convertConstants(array &$options): void
     {
+        static $constants = [];
+
         foreach (['createFromFormat', 'outputFormat'] as $format) {
-            if (isset($options[$format]) && defined("DATE_{$options[$format]}")) {
-                $options[$format] = constant("DATE_{$options[$format]}");
+            if (!isset($options[$format])) {
+                continue;
+            }
+
+            if (isset($constants[$options[$format]])) {
+                $options[$format] = $constants[$options[$format]];
+                continue;
+            }
+
+            if (defined("DATE_{$options[$format]}")) {
+                $options[$format] = $constants[$options[$format]] = constant("DATE_{$options[$format]}");
             }
         }
     }
