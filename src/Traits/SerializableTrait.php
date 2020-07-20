@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace PHPModelGenerator\Traits;
 
+use PHPModelGenerator\Model\SerializedValue;
+
 /**
  * Provide methods to serialize generated models
  *
@@ -13,6 +15,8 @@ namespace PHPModelGenerator\Traits;
  */
 trait SerializableTrait
 {
+    private static $customSerializer = [];
+
     /**
      * Get a JSON representation of the current state
      *
@@ -30,6 +34,14 @@ trait SerializableTrait
         }
 
         return json_encode($this->toArray($except, $depth), $options, $depth);
+    }
+
+    /**
+     * Return a JSON serializable representation of the current state
+     */
+    public function jsonSerialize()
+    {
+        return $this->toArray();
     }
 
     /**
@@ -56,27 +68,40 @@ trait SerializableTrait
                 continue;
             }
 
+            if ($customSerializer = $this->getCustomSerializerMethod($key)) {
+                $this->handleSerializedValue($modelData, $key, $this->{$customSerializer}());
+                continue;
+            }
+
             if (is_array($value)) {
                 $subData = [];
                 foreach ($value as $subKey => $element) {
-                    $subData[$subKey] = $this->evaluateAttribute($key, $element, $depth, $except);
+                    $subData[$subKey] = $this->evaluateAttribute($element, $depth, $except);
                 }
                 $modelData[$key] = $subData;
             } else {
-                $modelData[$key] = $this->evaluateAttribute($key, $value, $depth, $except);
+                $modelData[$key] = $this->evaluateAttribute($value, $depth, $except);
             }
         }
 
         return $modelData;
     }
 
-    private function evaluateAttribute(string $property, $attribute, int $depth, array $except)
+    private function handleSerializedValue(array &$data, $key, $serializedValue): void
     {
-        $customSerializer = 'serialize' . ucfirst($property);
-        if (method_exists($this, $customSerializer)) {
-            return $this->{$customSerializer}();
+        if ($serializedValue instanceof SerializedValue &&
+            $serializedValue->getSerializationStrategy() === SerializedValue::STRATEGY_MERGE_VALUE
+        ) {
+            $data = array_merge($data, $serializedValue->getSerializedValue());
+
+            return;
         }
 
+        $data[$key] = $serializedValue;
+    }
+
+    private function evaluateAttribute($attribute, int $depth, array $except)
+    {
         if (!is_object($attribute)) {
             return $attribute;
         }
@@ -88,17 +113,22 @@ trait SerializableTrait
         return (0 >= $depth)
             ? null
             : (
-            method_exists($attribute, 'toArray')
-                ? $attribute->toArray($except, $depth - 1)
-                : get_object_vars($attribute)
+                method_exists($attribute, 'toArray')
+                    ? $attribute->toArray($except, $depth - 1)
+                    : get_object_vars($attribute)
             );
     }
 
-    /**
-     * Return a JSON serializable representation of the current state
-     */
-    public function jsonSerialize()
-    {
-        return $this->toArray();
+    private function getCustomSerializerMethod(string $property) {
+        if (isset(self::$customSerializer[$property])) {
+            return self::$customSerializer[$property];
+        }
+
+        $customSerializer = 'serialize' . ucfirst($property);
+        if (!method_exists($this, $customSerializer)) {
+            $customSerializer = false;
+        }
+
+        return self::$customSerializer[$property] = $customSerializer;
     }
 }

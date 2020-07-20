@@ -35,7 +35,7 @@ class InvalidAdditionalPropertiesException extends ValidationException
 
     /**
      * Get a list of nested exceptions containing all failed validations indexed by the property name
-
+     *
      * @return ValidationException[][]
      */
     public function getNestedExceptions(): array
