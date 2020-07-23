@@ -61,43 +61,47 @@ trait SerializableTrait
 
         $depth--;
         $modelData = [];
-        array_push($except, 'rawModelDataInput', 'errorRegistry');
+        array_push($except, 'rawModelDataInput', 'errorRegistry', 'customSerializer');
 
-        foreach (get_object_vars($this) as $key => $value) {
+        foreach (get_class_vars(get_class($this)) as $key => $value) {
             if (in_array($key, $except)) {
                 continue;
             }
 
             if ($customSerializer = $this->getCustomSerializerMethod($key)) {
-                $this->handleSerializedValue($modelData, $key, $this->{$customSerializer}());
+                $this->handleSerializedValue($modelData, $key, $this->{$customSerializer}(), $depth, $except);
                 continue;
             }
 
-            if (is_array($value)) {
-                $subData = [];
-                foreach ($value as $subKey => $element) {
-                    $subData[$subKey] = $this->evaluateAttribute($element, $depth, $except);
-                }
-                $modelData[$key] = $subData;
-            } else {
-                $modelData[$key] = $this->evaluateAttribute($value, $depth, $except);
-            }
+            $modelData[$key] = $this->serializeValue($this->$key, $depth, $except);
         }
 
         return $modelData;
     }
 
-    private function handleSerializedValue(array &$data, $key, $serializedValue): void
+    private function handleSerializedValue(array &$data, $key, $serializedValue, int $depth, array $except): void
     {
         if ($serializedValue instanceof SerializedValue &&
             $serializedValue->getSerializationStrategy() === SerializedValue::STRATEGY_MERGE_VALUE
         ) {
-            $data = array_merge($data, $serializedValue->getSerializedValue());
+            $data = array_merge($data, $this->serializeValue($serializedValue->getSerializedValue(), $depth, $except));
 
             return;
         }
 
-        $data[$key] = $serializedValue;
+        $data[$key] = $this->serializeValue($serializedValue, $depth, $except);
+    }
+
+    private function serializeValue($value, int $depth, array $except) {
+        if (is_array($value)) {
+            $subData = [];
+            foreach ($value as $subKey => $element) {
+                $subData[$subKey] = $this->evaluateAttribute($element, $depth, $except);
+            }
+            return $subData;
+        }
+
+        return $this->evaluateAttribute($value, $depth, $except);
     }
 
     private function evaluateAttribute($attribute, int $depth, array $except)
@@ -113,9 +117,9 @@ trait SerializableTrait
         return (0 >= $depth)
             ? null
             : (
-                method_exists($attribute, 'toArray')
-                    ? $attribute->toArray($except, $depth - 1)
-                    : get_object_vars($attribute)
+            method_exists($attribute, 'toArray')
+                ? $attribute->toArray($except, $depth - 1)
+                : get_object_vars($attribute)
             );
     }
 
