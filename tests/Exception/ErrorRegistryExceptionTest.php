@@ -65,8 +65,16 @@ class ErrorRegistryExceptionTest extends TestCase
             'message' => "Value for test1 must not be larger than 2\nValue for test2 must not be larger than 2",
         ];
 
-        $this->assertSame($expectedOutput, $errorRegistry->toArray(['file', 'line', 'code']));
-        $this->assertSame(json_encode($expectedOutput), $errorRegistry->toJSON(['file', 'line', 'code']));
+        $this->assertSame($expectedOutput, $errorRegistry->toArray(['code']));
+        $this->assertSame(json_encode($expectedOutput), $errorRegistry->toJSON(['code']));
+
+        $serialized = $errorRegistry->toArray(['code'], 512, false);
+        $this->assertArrayHasKey('file', $serialized);
+        $this->assertArrayHasKey('line', $serialized);
+        $this->assertArrayHasKey('file', $serialized['errors'][0]);
+        $this->assertArrayHasKey('line', $serialized['errors'][0]);
+        $this->assertArrayHasKey('file', json_decode($errorRegistry->toJSON(['code'], 0, 512, false), true));
+        $this->assertArrayHasKey('line', json_decode($errorRegistry->toJSON(['code'], 0, 512, false), true));
 
         throw $errorRegistry;
     }
