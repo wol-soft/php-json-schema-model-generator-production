@@ -15,7 +15,7 @@ use PHPModelGenerator\Model\SerializedValue;
  */
 trait SerializableTrait
 {
-    private static $customSerializer = [];
+    private static $_customSerializer = [];
 
     /**
      * Get a JSON representation of the current state
@@ -61,10 +61,9 @@ trait SerializableTrait
 
         $depth--;
         $modelData = [];
-        array_push($except, 'rawModelDataInput', 'errorRegistry', 'customSerializer');
 
         foreach (get_class_vars(get_class($this)) as $key => $value) {
-            if (in_array($key, $except)) {
+            if (in_array($key, $except) || strstr($key, '_') !== false) {
                 continue;
             }
 
@@ -124,8 +123,8 @@ trait SerializableTrait
     }
 
     private function getCustomSerializerMethod(string $property) {
-        if (isset(self::$customSerializer[$property])) {
-            return self::$customSerializer[$property];
+        if (isset(self::$_customSerializer[$property])) {
+            return self::$_customSerializer[$property];
         }
 
         $customSerializer = 'serialize' . ucfirst($property);
@@ -133,6 +132,6 @@ trait SerializableTrait
             $customSerializer = false;
         }
 
-        return self::$customSerializer[$property] = $customSerializer;
+        return self::$_customSerializer[$property] = $customSerializer;
     }
 }
