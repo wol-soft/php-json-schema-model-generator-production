@@ -11,7 +11,7 @@ use PHPModelGenerator\Exception\ValidationException;
  *
  * @package PHPModelGenerator\Exception\ComposedValue
  */
-abstract class ConditionalException extends ValidationException
+class ConditionalException extends ValidationException
 {
     /**
      * ConditionalException constructor.
