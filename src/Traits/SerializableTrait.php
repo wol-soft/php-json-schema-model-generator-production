@@ -67,12 +67,12 @@ trait SerializableTrait
                 continue;
             }
 
-            if ($customSerializer = $this->getCustomSerializerMethod($key)) {
+            if ($customSerializer = $this->_getCustomSerializerMethod($key)) {
                 $this->handleSerializedValue($modelData, $key, $this->{$customSerializer}(), $depth, $except);
                 continue;
             }
 
-            $modelData[$key] = $this->serializeValue($this->$key, $depth, $except);
+            $modelData[$key] = $this->_getSerializedValue($this->$key, $depth, $except);
         }
 
         return $modelData;
@@ -83,15 +83,15 @@ trait SerializableTrait
         if ($serializedValue instanceof SerializedValue &&
             $serializedValue->getSerializationStrategy() === SerializedValue::STRATEGY_MERGE_VALUE
         ) {
-            $data = array_merge($data, $this->serializeValue($serializedValue->getSerializedValue(), $depth, $except));
+            $data = array_merge($data, $this->_getSerializedValue($serializedValue->getSerializedValue(), $depth, $except));
 
             return;
         }
 
-        $data[$key] = $this->serializeValue($serializedValue, $depth, $except);
+        $data[$key] = $this->_getSerializedValue($serializedValue, $depth, $except);
     }
 
-    private function serializeValue($value, int $depth, array $except) {
+    private function _getSerializedValue($value, int $depth, array $except) {
         if (is_array($value)) {
             $subData = [];
             foreach ($value as $subKey => $element) {
@@ -122,7 +122,7 @@ trait SerializableTrait
             );
     }
 
-    private function getCustomSerializerMethod(string $property) {
+    private function _getCustomSerializerMethod(string $property) {
         if (isset(self::$_customSerializer[$property])) {
             return self::$_customSerializer[$property];
         }
