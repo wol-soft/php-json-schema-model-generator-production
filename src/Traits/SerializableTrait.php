@@ -4,8 +4,6 @@ declare(strict_types = 1);
 
 namespace PHPModelGenerator\Traits;
 
-use PHPModelGenerator\Model\SerializedValue;
-
 /**
  * Provide methods to serialize generated models
  *
@@ -68,27 +66,22 @@ trait SerializableTrait
             }
 
             if ($customSerializer = $this->_getCustomSerializerMethod($key)) {
-                $this->handleSerializedValue($modelData, $key, $this->{$customSerializer}(), $depth, $except);
+                $modelData[$key] = $this->_getSerializedValue($this->{$customSerializer}(), $depth, $except);
                 continue;
             }
 
             $modelData[$key] = $this->_getSerializedValue($this->$key, $depth, $except);
         }
 
-        return $modelData;
+        return $this->resolveSerializationHook($modelData, $depth, $except);
     }
 
-    private function handleSerializedValue(array &$data, $key, $serializedValue, int $depth, array $except): void
+    /**
+     * Function can be overwritten by classes using the trait to hook into serialization
+     */
+    protected function resolveSerializationHook(array $data, int $depth, array $except): array
     {
-        if ($serializedValue instanceof SerializedValue &&
-            $serializedValue->getSerializationStrategy() === SerializedValue::STRATEGY_MERGE_VALUE
-        ) {
-            $data = array_merge($data, $this->_getSerializedValue($serializedValue->getSerializedValue(), $depth, $except));
-
-            return;
-        }
-
-        $data[$key] = $this->_getSerializedValue($serializedValue, $depth, $except);
+        return $data;
     }
 
     private function _getSerializedValue($value, int $depth, array $except) {
