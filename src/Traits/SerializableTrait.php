@@ -75,7 +75,15 @@ trait SerializableTrait
             $modelData[$key] = $this->_getSerializedValue($this->$key, $depth, $except);
         }
 
-        return $modelData;
+        return $this->resolveSerializationHook($modelData, $depth, $except);
+    }
+
+    /**
+     * Function can be overwritten by classes using the trait to hook into serialization
+     */
+    protected function resolveSerializationHook(array $data, int $depth, array $except): array
+    {
+        return $data;
     }
 
     private function handleSerializedValue(array &$data, $key, $serializedValue, int $depth, array $except): void
