@@ -25,6 +25,7 @@ trait SerializableTrait
      *
      * @return string|false
      */
+    #[\ReturnTypeWillChange]
     public function toJSON(array $except = [], int $options = 0, int $depth = 512)
     {
         if ($depth < 1) {
