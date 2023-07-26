@@ -61,6 +61,13 @@ trait SerializableTrait
         $depth--;
         $modelData = [];
 
+        if (isset($this->_skipNotProvidedPropertiesMap)) {
+            $except = array_merge(
+                $except,
+                array_diff($this->_skipNotProvidedPropertiesMap, array_keys($this->_rawModelDataInput))
+            );
+        }
+
         foreach (get_class_vars(get_class($this)) as $key => $value) {
             if (in_array($key, $except) || strstr($key, '_') !== false) {
                 continue;
