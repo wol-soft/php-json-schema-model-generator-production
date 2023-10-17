@@ -32,7 +32,7 @@ class InvalidTypeException extends ValidationException
                 'Invalid type for %s. Requires %s, got %s',
                 $propertyName,
                 is_array($expectedType) ? '[' . join(', ', $expectedType) . ']' : $expectedType,
-                gettype($providedValue)),
+                is_object($providedValue) ? get_class($providedValue) : gettype($providedValue)),
             $propertyName,
             $providedValue
         );
