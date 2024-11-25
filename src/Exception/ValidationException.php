@@ -32,7 +32,7 @@ abstract class ValidationException extends JSONModelValidationException
         string $propertyName,
         $providedValue,
         $code = 0,
-        Throwable $previous = null
+        ?Throwable $previous = null
     ) {
         $this->propertyName = $propertyName;
         $this->providedValue = $providedValue;
