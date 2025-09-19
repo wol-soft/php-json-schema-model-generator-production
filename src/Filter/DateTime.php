@@ -34,11 +34,11 @@ class DateTime
                 return new \DateTime();
             }
 
-            if (($options['denyEmptyValue'] ?? false) && empty($value)) {
+            if (($options['denyEmptyValue'] ?? false) && $value === '') {
                 throw new Exception("Can't process an empty date value");
             }
 
-            if (($options['convertEmptyValueToNull'] ?? false) && empty($value)) {
+            if (($options['convertEmptyValueToNull'] ?? false) && $value === '') {
                 return null;
             }
 
