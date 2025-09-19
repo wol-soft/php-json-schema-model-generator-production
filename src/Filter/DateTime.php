@@ -21,11 +21,15 @@ class DateTime
      *
      * @throws Exception
      */
-    public static function filter(?string $value, array $options = []): ?\DateTime
+    public static function filter(string | int | float | null $value, array $options = []): ?\DateTime
     {
         static::convertConstants($options);
 
         try {
+            if (is_int($value) || is_float($value)) {
+                return (new \DateTime())->setTimestamp($value);
+            }
+
             if (($options['convertNullToNow'] ?? false) && $value === null) {
                 return new \DateTime();
             }

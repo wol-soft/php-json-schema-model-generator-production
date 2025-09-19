@@ -20,7 +20,7 @@ class DateTimeTest extends TestCase
      * @param string|null $input
      * @param string|null $output
      */
-    public function testDateTimeFilter(?string $input, ?string $output): void
+    public function testDateTimeFilter(string | int | null $input, ?string $output): void
     {
         $result = DateTimeFilter::filter($input);
 
@@ -38,6 +38,8 @@ class DateTimeTest extends TestCase
             'Empty string' => ['', 'now'],
             'DateTime compatible string' => ['+1 day', '+1 day'],
             'DateTime' => ['2020-12-12', '2020-12-12'],
+            'Empty timestamp' => [0, '1970-01-01'],
+            'timestamp' => [1607731200, '2020-12-12']
         ];
     }
 
