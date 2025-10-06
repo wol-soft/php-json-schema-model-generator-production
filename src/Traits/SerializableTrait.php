@@ -94,11 +94,10 @@ trait SerializableTrait
 
     private function _getSerializedValue($value, int $depth, array $except) {
         if (is_array($value)) {
-            $subData = [];
-            foreach ($value as $subKey => $element) {
-                $subData[$subKey] = $this->evaluateAttribute($element, $depth, $except);
-            }
-            return $subData;
+            return array_map(
+                fn (mixed $element): mixed => $this->evaluateAttribute($element, $depth - 1, $except),
+                $value,
+            );
         }
 
         return $this->evaluateAttribute($value, $depth, $except);
@@ -106,6 +105,17 @@ trait SerializableTrait
 
     private function evaluateAttribute($attribute, int $depth, array $except)
     {
+        if ($depth < 0) {
+            return null;
+        }
+
+        if (is_array($attribute)) {
+            return array_map(
+                fn (mixed $element): mixed => $this->evaluateAttribute($element, $depth - 1, $except),
+                $attribute,
+            );
+        }
+
         if (!is_object($attribute)) {
             return $attribute;
         }
