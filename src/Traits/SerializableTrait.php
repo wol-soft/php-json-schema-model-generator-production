@@ -40,9 +40,9 @@ trait SerializableTrait
      * Return a JSON serializable representation of the current state
      */
     #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(array $except = [])
     {
-        return $this->_getValues(512, [], true);
+        return $this->_getValues(512, $except, true);
     }
 
     /**
@@ -139,9 +139,8 @@ trait SerializableTrait
 
         $data = match (true) {
             0 >= $depth                                                           => null,
-            $emptyObjectsAsStdClass && method_exists($attribute, 'toJSON')        => $attribute->toJSON($except),
+            $emptyObjectsAsStdClass && method_exists($attribute, 'jsonSerialize') => $attribute->jsonSerialize($except),
             method_exists($attribute, 'toArray')                                  => $attribute->toArray($except),
-            $emptyObjectsAsStdClass && method_exists($attribute, 'jsonSerialize') => $attribute->jsonSerialize(),
             default                                                               => get_object_vars($attribute),
         };
 
