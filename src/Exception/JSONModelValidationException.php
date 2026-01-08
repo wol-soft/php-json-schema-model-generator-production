@@ -23,7 +23,7 @@ abstract class JSONModelValidationException extends Exception implements JsonSer
     /**
      * @inheritDoc
      *
-     * @param bool $stripSensitiveData By default the file and the line of the exception will not be serialized
+     * @param bool $stripSensitiveData By default, the file and the line of the exception will not be serialized
      */
     public function toArray(array $except = [], int $depth = 512, bool $stripSensitiveData = true)
     {

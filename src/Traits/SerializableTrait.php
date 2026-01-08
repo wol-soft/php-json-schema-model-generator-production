@@ -139,8 +139,9 @@ trait SerializableTrait
 
         $data = match (true) {
             0 >= $depth                                                           => null,
+            $emptyObjectsAsStdClass && method_exists($attribute, 'toJSON')        => $attribute->toJSON($except),
+            method_exists($attribute, 'toArray')                                  => $attribute->toArray($except),
             $emptyObjectsAsStdClass && method_exists($attribute, 'jsonSerialize') => $attribute->jsonSerialize(),
-            method_exists($attribute, 'toArray')                                  => $attribute->toArray(),
             default                                                               => get_object_vars($attribute),
         };
 
