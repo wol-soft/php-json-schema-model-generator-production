@@ -23,9 +23,7 @@ class ErrorRegistryException extends JSONModelValidationException implements Err
         $this->message = join(
             "\n",
             array_map(
-                function (ValidationException $e): string {
-                    return $e->getMessage();
-                },
+                fn(ValidationException $e): string => $e->getMessage(),
                 $this->errors
             )
         );

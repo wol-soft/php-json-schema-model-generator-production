@@ -13,10 +13,6 @@ use PHPUnit\Framework\TestCase;
  */
 class TrimTest extends TestCase
 {
-    /**
-     * @param string|null $input
-     * @param string|null $output
-     */
     #[DataProvider('trimDataProvider')]
     public function testTrimFilter(?string $input, ?string $output): void
     {

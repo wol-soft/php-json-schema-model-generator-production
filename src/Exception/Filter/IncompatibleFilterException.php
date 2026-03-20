@@ -13,24 +13,17 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class IncompatibleFilterException extends ValidationException
 {
-    /** @var string */
-    protected $filterToken;
-
     /**
      * IncompatibleFilterException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
-     * @param string $filterToken
      */
-    public function __construct($providedValue, string $propertyName, string $filterToken)
+    public function __construct($providedValue, string $propertyName, protected string $filterToken)
     {
-        $this->filterToken = $filterToken;
-
         parent::__construct(
             sprintf(
                 'Filter %s is not compatible with property type %s for property %s',
-                $filterToken,
+                $this->filterToken,
                 gettype($providedValue),
                 $propertyName
             ),
@@ -39,9 +32,6 @@ class IncompatibleFilterException extends ValidationException
         );
     }
 
-    /**
-     * @return string
-     */
     public function getFilterToken(): string
     {
         return $this->filterToken;

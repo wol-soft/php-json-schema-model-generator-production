@@ -13,26 +13,20 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class InvalidTypeException extends ValidationException
 {
-    /** @var array|string */
-    protected $expectedType;
-
     /**
      * PatternException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      * @param array|string $expectedType
      */
-    public function __construct($providedValue, string $propertyName, $expectedType)
+    public function __construct($providedValue, string $propertyName, protected $expectedType)
     {
-        $this->expectedType= $expectedType;
-
         parent::__construct(
             sprintf(
                 'Invalid type for %s. Requires %s, got %s',
                 $propertyName,
-                is_array($expectedType) ? '[' . join(', ', $expectedType) . ']' : $expectedType,
-                is_object($providedValue) ? get_class($providedValue) : gettype($providedValue)),
+                is_array($this->expectedType) ? '[' . join(', ', $this->expectedType) . ']' : $this->expectedType,
+                is_object($providedValue) ? $providedValue::class : gettype($providedValue)),
             $propertyName,
             $providedValue
         );

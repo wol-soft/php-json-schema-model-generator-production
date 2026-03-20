@@ -13,8 +13,6 @@ interface JSONModelInterface
 {
     /**
      * Get the raw input used to set up the model
-     *
-     * @return array
      */
     public function getRawModelDataInput(): array;
 }

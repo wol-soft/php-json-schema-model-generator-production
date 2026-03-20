@@ -13,10 +13,6 @@ use PHPUnit\Framework\TestCase;
  */
 class NotEmptyTest extends TestCase
 {
-    /**
-     * @param array|null $input
-     * @param array|null $output
-     */
     #[DataProvider('notEmptyDataProvider')]
     public function testNotEmptyFilter(?array $input, ?array $output): void
     {

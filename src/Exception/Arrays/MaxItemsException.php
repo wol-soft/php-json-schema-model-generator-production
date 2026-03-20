@@ -13,30 +13,20 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class MaxItemsException extends ValidationException
 {
-    /** @var int */
-    protected $maxItems;
-
     /**
      * MaxItemsException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
-     * @param int $maxItems
      */
-    public function __construct($providedValue, string $propertyName, int $maxItems)
+    public function __construct($providedValue, string $propertyName, protected int $maxItems)
     {
-        $this->maxItems = $maxItems;
-
         parent::__construct(
-            "Array $propertyName must not contain more than $maxItems items",
+            "Array $propertyName must not contain more than {$this->maxItems} items",
             $propertyName,
             $providedValue
         );
     }
 
-    /**
-     * @return int
-     */
     public function getMaxItems(): int
     {
         return $this->maxItems;

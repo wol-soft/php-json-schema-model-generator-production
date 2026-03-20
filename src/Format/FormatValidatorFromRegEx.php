@@ -11,16 +11,10 @@ namespace PHPModelGenerator\Format;
  */
 class FormatValidatorFromRegEx implements FormatValidatorInterface
 {
-    private $pattern;
-
-    public function __construct(string $pattern)
+    public function __construct(private readonly string $pattern)
     {
-        $this->pattern = $pattern;
     }
 
-    /**
-     * @return string
-     */
     public function getPattern(): string
     {
         return $this->pattern;

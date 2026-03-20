@@ -17,7 +17,6 @@ class DateTimeTest extends TestCase
 {
     /**
      * @param string|null $input
-     * @param string|null $output
      */
     #[DataProvider('dateTimeDataProvider')]
     public function testDateTimeFilter(string | int | null $input, ?string $output): void
