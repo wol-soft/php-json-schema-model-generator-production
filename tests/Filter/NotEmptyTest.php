@@ -3,6 +3,7 @@
 namespace PHPModelGenerator\Tests\Filter;
 
 use PHPModelGenerator\Filter\NotEmpty;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,17 +14,16 @@ use PHPUnit\Framework\TestCase;
 class NotEmptyTest extends TestCase
 {
     /**
-     * @dataProvider notEmptyDataProvider
-     *
      * @param array|null $input
      * @param array|null $output
      */
+    #[DataProvider('notEmptyDataProvider')]
     public function testNotEmptyFilter(?array $input, ?array $output): void
     {
         $this->assertSame($output, NotEmpty::filter($input));
     }
 
-    public function notEmptyDataProvider(): array
+    public static function notEmptyDataProvider(): array
     {
         return [
             'null' => [null, null],
