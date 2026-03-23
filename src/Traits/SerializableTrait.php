@@ -78,15 +78,16 @@ trait SerializableTrait
         $depth--;
         $modelData = [];
 
+        $localExcept = $except;
         if (isset($this->_skipNotProvidedPropertiesMap, $this->_rawModelDataInput)) {
-            $except = array_merge(
-                $except,
+            $localExcept = array_merge(
+                $localExcept,
                 array_diff($this->_skipNotProvidedPropertiesMap, array_keys($this->_rawModelDataInput))
             );
         }
 
         foreach (get_class_vars($this::class) as $key => $value) {
-            if (in_array($key, $except) || str_starts_with($key, '_') !== false) {
+            if (in_array($key, $localExcept) || str_starts_with($key, '_') !== false) {
                 continue;
             }
 
