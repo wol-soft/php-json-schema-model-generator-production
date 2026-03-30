@@ -13,30 +13,20 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class MaxLengthException extends ValidationException
 {
-    /** @var int */
-    protected $maximumLength;
-
     /**
      * MaxLengthException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
-     * @param int $maximumLength
      */
-    public function __construct($providedValue, string $propertyName, int $maximumLength)
+    public function __construct($providedValue, string $propertyName, protected int $maximumLength)
     {
-        $this->maximumLength = $maximumLength;
-
         parent::__construct(
-            "Value for $propertyName must not be longer than $maximumLength",
+            "Value for $propertyName must not be longer than {$this->maximumLength}",
             $propertyName,
             $providedValue
         );
     }
 
-    /**
-     * @return int
-     */
     public function getMaximumLength(): int
     {
         return $this->maximumLength;

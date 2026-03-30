@@ -13,20 +13,14 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class InvalidItemException extends ValidationException
 {
-    /** @var ValidationException[][] */
-    protected $invalidItems;
-
     /**
      * InvalidItemException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      * @param ValidationException[][] $invalidItems
      */
-    public function __construct($providedValue, string $propertyName, array $invalidItems)
+    public function __construct($providedValue, string $propertyName, protected array $invalidItems)
     {
-        $this->invalidItems = $invalidItems;
-
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
     }
 
@@ -48,9 +42,7 @@ class InvalidItemException extends ValidationException
                     str_replace(
                         "\n",
                         "\n    ",
-                        array_map(function (ValidationException $exception): string {
-                            return $exception->getMessage();
-                        }, $exceptions)
+                        array_map(fn(ValidationException $exception): string => $exception->getMessage(), $exceptions)
                     )
                 );
         }

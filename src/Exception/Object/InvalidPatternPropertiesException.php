@@ -13,23 +13,14 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class InvalidPatternPropertiesException extends ValidationException
 {
-    /** @var ValidationException[][] */
-    protected $nestedExceptions;
-    /** @var string */
-    protected $pattern;
-
     /**
      * InvalidAdditionalPropertiesException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      * @param ValidationException[][] $nestedExceptions
      */
-    public function __construct($providedValue, string $propertyName, string $pattern, $nestedExceptions)
+    public function __construct($providedValue, string $propertyName, protected string $pattern, protected $nestedExceptions)
     {
-        $this->nestedExceptions = $nestedExceptions;
-        $this->pattern = $pattern;
-
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
     }
 
@@ -43,9 +34,6 @@ class InvalidPatternPropertiesException extends ValidationException
         return $this->nestedExceptions;
     }
 
-    /**
-     * @return string
-     */
     public function getPattern(): string
     {
         return $this->pattern;
@@ -64,9 +52,7 @@ class InvalidPatternPropertiesException extends ValidationException
                     str_replace(
                         "\n",
                         "\n    ",
-                        array_map(function (ValidationException $exception): string {
-                            return $exception->getMessage();
-                        }, $exceptions)
+                        array_map(fn(ValidationException $exception): string => $exception->getMessage(), $exceptions)
                     )
                 )
             );

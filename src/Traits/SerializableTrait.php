@@ -86,7 +86,7 @@ trait SerializableTrait
             );
         }
 
-        foreach (get_class_vars(get_class($this)) as $key => $value) {
+        foreach (get_class_vars($this::class) as $key => $value) {
             if (in_array($key, $localExcept) || str_starts_with($key, '_') !== false) {
                 continue;
             }
@@ -102,7 +102,7 @@ trait SerializableTrait
         $data = $this->resolveSerializationHook($modelData, $depth, $except);
 
         if ($emptyObjectsAsStdClass && empty($data)) {
-            $data = new stdClass();
+            return new stdClass();
         }
 
         return $data;
@@ -146,7 +146,7 @@ trait SerializableTrait
         };
 
         if ($data === [] && $emptyObjectsAsStdClass) {
-            $data = new stdClass();
+            return new stdClass();
         }
 
         return $data;

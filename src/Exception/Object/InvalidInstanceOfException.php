@@ -13,35 +13,26 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class InvalidInstanceOfException extends ValidationException
 {
-    /** @var string */
-    protected $expectedClass;
-
     /**
      * InvalidInstanceOfException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      * @param string $expectedClass
      */
-    public function __construct($providedValue, string $propertyName, $expectedClass)
+    public function __construct($providedValue, string $propertyName, protected $expectedClass)
     {
-        $this->expectedClass= $expectedClass;
-
         parent::__construct(
             sprintf(
                 'Invalid class for %s. Requires %s, got %s',
                 $propertyName,
-                $expectedClass,
-                get_class($providedValue)
+                $this->expectedClass,
+                $providedValue::class
             ),
             $propertyName,
             $providedValue
         );
     }
 
-    /**
-     * @return string
-     */
     public function getExpectedClass(): string
     {
         return $this->expectedClass;
