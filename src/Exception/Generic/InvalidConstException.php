@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Generic;
 
@@ -25,7 +25,7 @@ class InvalidConstException extends ValidationException
      */
     public function __construct($providedValue, string $propertyName, $expectedValue)
     {
-        $this->expectedValue= $expectedValue;
+        $this->expectedValue = $expectedValue;
 
         parent::__construct(
             "Invalid value for $propertyName declined by const constraint",

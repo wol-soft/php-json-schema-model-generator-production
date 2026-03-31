@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Object;
 
@@ -25,7 +25,7 @@ class InvalidInstanceOfException extends ValidationException
      */
     public function __construct($providedValue, string $propertyName, $expectedClass)
     {
-        $this->expectedClass= $expectedClass;
+        $this->expectedClass = $expectedClass;
 
         parent::__construct(
             sprintf(

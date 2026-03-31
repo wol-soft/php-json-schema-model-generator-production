@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace PHPModelGenerator\Traits;
 
@@ -66,10 +66,12 @@ trait SerializableTrait
     /**
      * Get a representation of the current state
      *
-     * @param array $except                provide a list of properties which shouldn't be contained in the resulting JSON.
-     *                                     eg. if you want to return an user model and don't want the password to be included
+     * @param array $except                provide a list of properties which shouldn't be contained in the resulting
+     *                                     JSON. eg. if you want to return an user model and don't want the password
+     *                                     to be included
      * @param int $depth                   the maximum level of object nesting. Must be greater than 0
-     * @param bool $emptyObjectsAsStdClass If set to true, the wrapping data structure for empty objects will be an stdClass. Array otherwise
+     * @param bool $emptyObjectsAsStdClass If set to true, the wrapping data structure for empty objects will be an
+     *                                     stdClass. Array otherwise
      *
      * @return array|stdClass
      */
@@ -92,7 +94,12 @@ trait SerializableTrait
             }
 
             if ($customSerializer = $this->_getCustomSerializerMethod($key)) {
-                $modelData[$key] = $this->_getSerializedValue($this->{$customSerializer}(), $depth, $except, $emptyObjectsAsStdClass);
+                $modelData[$key] = $this->_getSerializedValue(
+                    $this->{$customSerializer}(),
+                    $depth,
+                    $except,
+                    $emptyObjectsAsStdClass,
+                );
                 continue;
             }
 
@@ -116,7 +123,8 @@ trait SerializableTrait
         return $data;
     }
 
-    private function _getSerializedValue($value, int $depth, array $except, bool $emptyObjectsAsStdClass = false) {
+    private function _getSerializedValue($value, int $depth, array $except, bool $emptyObjectsAsStdClass = false)
+    {
         if (is_array($value)) {
             $subData = [];
             foreach ($value as $subKey => $element) {
@@ -152,7 +160,8 @@ trait SerializableTrait
         return $data;
     }
 
-    private function _getCustomSerializerMethod(string $property) {
+    private function _getCustomSerializerMethod(string $property)
+    {
         if (isset(self::$_customSerializer[$property])) {
             return self::$_customSerializer[$property];
         }
