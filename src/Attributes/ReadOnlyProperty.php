@@ -7,11 +7,11 @@ namespace PHPModelGenerator\Attributes;
 use Attribute;
 
 /**
- * The original JSON name from the schema, the code was generated from
+ * Marks a generated property as readOnly in the JSON Schema
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class SchemaName
+readonly class ReadOnlyProperty
 {
-    public function __construct(public string $name)
+    public function __construct()
     {}
 }
