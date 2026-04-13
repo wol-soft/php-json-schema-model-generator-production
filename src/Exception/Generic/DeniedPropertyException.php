@@ -17,7 +17,6 @@ class DeniedPropertyException extends ValidationException
      * DeniedPropertyException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      */
     public function __construct($providedValue, string $propertyName)
     {

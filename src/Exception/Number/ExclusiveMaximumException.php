@@ -13,22 +13,16 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class ExclusiveMaximumException extends ValidationException
 {
-    /** @var int|float */
-    protected $exclusiveMaximum;
-
     /**
      * ExclusiveMaximumException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      * @param int|float $exclusiveMaximum
      */
-    public function __construct($providedValue, string $propertyName, $exclusiveMaximum)
+    public function __construct($providedValue, string $propertyName, protected $exclusiveMaximum)
     {
-        $this->exclusiveMaximum = $exclusiveMaximum;
-
         parent::__construct(
-            "Value for $propertyName must be smaller than $exclusiveMaximum",
+            "Value for $propertyName must be smaller than {$this->exclusiveMaximum}",
             $propertyName,
             $providedValue
         );

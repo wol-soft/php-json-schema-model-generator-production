@@ -16,20 +16,14 @@ class InvalidAdditionalPropertiesException extends ValidationException
     protected const MAIN_MESSAGE = 'Provided JSON for %s contains invalid additional properties.';
     protected const TYPE = 'additional property';
 
-    /** @var ValidationException[][] */
-    protected $nestedExceptions;
-
     /**
      * InvalidAdditionalPropertiesException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      * @param ValidationException[][] $nestedExceptions
      */
-    public function __construct($providedValue, string $propertyName, $nestedExceptions)
+    public function __construct($providedValue, string $propertyName, protected $nestedExceptions)
     {
-        $this->nestedExceptions = $nestedExceptions;
-
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
     }
 
@@ -56,9 +50,7 @@ class InvalidAdditionalPropertiesException extends ValidationException
                     str_replace(
                         "\n",
                         "\n    ",
-                        array_map(function (ValidationException $exception): string {
-                            return $exception->getMessage();
-                        }, $exceptions)
+                        array_map(fn(ValidationException $exception): string => $exception->getMessage(), $exceptions)
                     )
                 )
             );

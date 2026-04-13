@@ -15,9 +15,7 @@ class DateTime
 {
     /**
      * @param string|null $value
-     * @param array       $options
      *
-     * @return \DateTime|null
      *
      * @throws Exception
      */
@@ -58,12 +56,7 @@ class DateTime
         }
     }
 
-    /**
-     * @param \DateTime|null $value
-     * @param array $options
-     *
-     * @return string|null
-     */
+    
     public static function serialize(?\DateTime $value, array $options = []): ?string
     {
         static::convertConstants($options);
@@ -75,8 +68,6 @@ class DateTime
 
     /**
      * Make DATE constants available
-     *
-     * @param array $options
      */
     protected static function convertConstants(array &$options): void
     {

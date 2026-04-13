@@ -15,34 +15,21 @@ use PHPModelGenerator\Exception\ValidationException;
 abstract class InvalidComposedValueException extends ValidationException
 {
     protected const COMPOSED_ERROR_MESSAGE = '';
-
-    /** @var int */
-    protected $succeededCompositionElements;
-    /** @var ValidationException[][] */
-    protected $compositionErrorCollection;
     /**
      * InvalidComposedValueException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
-     * @param int $succeededCompositionElements
      * @param ValidationException[][] $compositionErrorCollection
      */
     public function __construct(
         $providedValue,
         string $propertyName,
-        int $succeededCompositionElements,
-        array $compositionErrorCollection
+        protected int $succeededCompositionElements,
+        protected array $compositionErrorCollection
     ) {
-        $this->succeededCompositionElements = $succeededCompositionElements;
-        $this->compositionErrorCollection = $compositionErrorCollection;
-
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
     }
 
-    /**
-     * @return int
-     */
     public function getSucceededCompositionElements(): int
     {
         return $this->succeededCompositionElements;
@@ -70,9 +57,7 @@ abstract class InvalidComposedValueException extends ValidationException
                             ? ": Failed\n    * " .
                                 implode(
                                     "\n    * ",
-                                    array_map(function (ValidationException $exception): string {
-                                        return $exception->getMessage();
-                                    }, $exception->getErrors())
+                                    array_map(fn(ValidationException $exception): string => $exception->getMessage(), $exception->getErrors())
                                 )
                             : ': Valid'
                         );

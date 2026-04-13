@@ -13,30 +13,20 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class FormatException extends ValidationException
 {
-    /** @var string */
-    protected $expectedFormat;
-
     /**
      * FormatException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
-     * @param string $expectedFormat
      */
-    public function __construct($providedValue, string $propertyName, string $expectedFormat)
+    public function __construct($providedValue, string $propertyName, protected string $expectedFormat)
     {
-        $this->expectedFormat = $expectedFormat;
-
         parent::__construct(
-            "Value for $propertyName must match the format $expectedFormat",
+            "Value for $propertyName must match the format {$this->expectedFormat}",
             $propertyName,
             $providedValue
         );
     }
 
-    /**
-     * @return string
-     */
     public function getExpectedFormat(): string
     {
         return $this->expectedFormat;

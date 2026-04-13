@@ -13,20 +13,14 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class InvalidConstException extends ValidationException
 {
-    /** @var mixed */
-    protected $expectedValue;
-
     /**
      * InvalidConstException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      * @param mixed $expectedValue
      */
-    public function __construct($providedValue, string $propertyName, $expectedValue)
+    public function __construct($providedValue, string $propertyName, protected $expectedValue)
     {
-        $this->expectedValue = $expectedValue;
-
         parent::__construct(
             "Invalid value for $propertyName declined by const constraint",
             $propertyName,

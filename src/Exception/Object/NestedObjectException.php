@@ -14,35 +14,25 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class NestedObjectException extends ValidationException
 {
-    /** @var Exception */
-    private $nestedException;
-
     /**
      * NotAllowedAdditionalPropertiesException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
-     * @param Exception $nestedException
      */
-    public function __construct($providedValue, string $propertyName, Exception $nestedException)
+    public function __construct($providedValue, string $propertyName, private readonly Exception $nestedException)
     {
-        $this->nestedException = $nestedException;
-
         parent::__construct(
             "Invalid nested object for property $propertyName:\n  - " .
                 preg_replace(
                     "/\n([^\s])/m",
                     "\n  - $1",
-                    preg_replace("/\n\s/m", "\n     ", $nestedException->getMessage())
+                    (string) preg_replace("/\n\s/m", "\n     ", $this->nestedException->getMessage())
                 ),
             $propertyName,
             $providedValue
         );
     }
 
-    /**
-     * @return Exception
-     */
     public function getNestedException(): Exception
     {
         return $this->nestedException;

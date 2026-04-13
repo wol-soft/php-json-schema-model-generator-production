@@ -16,7 +16,6 @@ interface ErrorRegistryExceptionInterface extends Throwable
     /**
      * Add an error to the error registry
      *
-     * @param ValidationException $exception
      *
      * @return $this
      */

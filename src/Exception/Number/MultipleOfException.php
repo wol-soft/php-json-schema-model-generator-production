@@ -13,22 +13,16 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class MultipleOfException extends ValidationException
 {
-    /** @var int|float */
-    protected $multipleOf;
-
     /**
      * MultipleOfException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      * @param int|float $multipleOf
      */
-    public function __construct($providedValue, string $propertyName, $multipleOf)
+    public function __construct($providedValue, string $propertyName, protected $multipleOf)
     {
-        $this->multipleOf = $multipleOf;
-
         parent::__construct(
-            "Value for $propertyName must be a multiple of $multipleOf",
+            "Value for $propertyName must be a multiple of {$this->multipleOf}",
             $propertyName,
             $providedValue
         );

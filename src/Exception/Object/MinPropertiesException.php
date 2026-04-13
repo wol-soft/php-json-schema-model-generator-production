@@ -13,30 +13,20 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class MinPropertiesException extends ValidationException
 {
-    /** @var int */
-    protected $minProperties;
-
     /**
      * MinPropertiesException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
-     * @param int $minProperties
      */
-    public function __construct($providedValue, string $propertyName, int $minProperties)
+    public function __construct($providedValue, string $propertyName, protected int $minProperties)
     {
-        $this->minProperties = $minProperties;
-
         parent::__construct(
-            "Provided object for $propertyName must not contain less than $minProperties properties",
+            "Provided object for $propertyName must not contain less than {$this->minProperties} properties",
             $propertyName,
             $providedValue
         );
     }
 
-    /**
-     * @return int
-     */
     public function getMinProperties(): int
     {
         return $this->minProperties;

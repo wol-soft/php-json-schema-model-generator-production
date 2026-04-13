@@ -13,20 +13,13 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class EnumException extends ValidationException
 {
-    /** @var array */
-    protected $allowedValues;
-
     /**
      * EnumException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
-     * @param array $allowedValues
      */
-    public function __construct($providedValue, string $propertyName, array $allowedValues)
+    public function __construct($providedValue, string $propertyName, protected array $allowedValues)
     {
-        $this->allowedValues = $allowedValues;
-
         parent::__construct(
             "Invalid value for $propertyName declined by enum constraint",
             $propertyName,
@@ -34,9 +27,6 @@ class EnumException extends ValidationException
         );
     }
 
-    /**
-     * @return array
-     */
     public function getAllowedValues(): array
     {
         return $this->allowedValues;

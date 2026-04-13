@@ -3,6 +3,7 @@
 namespace PHPModelGenerator\Tests\Filter;
 
 use PHPModelGenerator\Filter\Trim;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -12,18 +13,13 @@ use PHPUnit\Framework\TestCase;
  */
 class TrimTest extends TestCase
 {
-    /**
-     * @dataProvider trimDataProvider
-     *
-     * @param string|null $input
-     * @param string|null $output
-     */
+    #[DataProvider('trimDataProvider')]
     public function testTrimFilter(?string $input, ?string $output): void
     {
         $this->assertSame($output, Trim::filter($input));
     }
 
-    public function trimDataProvider(): array
+    public static function trimDataProvider(): array
     {
         return [
             'null' => [null, null],

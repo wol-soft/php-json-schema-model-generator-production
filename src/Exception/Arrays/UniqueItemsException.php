@@ -17,7 +17,6 @@ class UniqueItemsException extends ValidationException
      * UniqueItemsException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      */
     public function __construct($providedValue, string $propertyName)
     {

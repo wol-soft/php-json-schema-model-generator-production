@@ -14,31 +14,19 @@ use PHPModelGenerator\Exception\ValidationException;
 class RegularPropertyAsAdditionalPropertyException extends ValidationException
 {
     /**
-     * @var string
-     */
-    private $class;
-
-    /**
      * EnumException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
-     * @param string $class
      */
-    public function __construct($providedValue, string $propertyName, string $class)
+    public function __construct($providedValue, string $propertyName, private readonly string $class)
     {
-        $this->class = $class;
-
         parent::__construct(
-            sprintf("Couldn't add regular property %s as additional property to object %s", $propertyName, $class),
+            sprintf("Couldn't add regular property %s as additional property to object %s", $propertyName, $this->class),
             $propertyName,
             $providedValue
         );
     }
 
-    /**
-     * @return string
-     */
     public function getClass(): string
     {
         return $this->class;

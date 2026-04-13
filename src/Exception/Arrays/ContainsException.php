@@ -17,7 +17,6 @@ class ContainsException extends ValidationException
      * ContainsException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      */
     public function __construct($providedValue, string $propertyName)
     {

@@ -13,20 +13,14 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class InvalidTupleException extends ValidationException
 {
-    /** @var ValidationException[][] */
-    protected $invalidTuples;
-
     /**
      * InvalidTupleException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      * @param ValidationException[][] $invalidTuples
      */
-    public function __construct($providedValue, string $propertyName, array $invalidTuples)
+    public function __construct($providedValue, string $propertyName, protected array $invalidTuples)
     {
-        $this->invalidTuples = $invalidTuples;
-
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
     }
 
@@ -48,9 +42,7 @@ class InvalidTupleException extends ValidationException
                     str_replace(
                         "\n",
                         "\n    ",
-                        array_map(function (ValidationException $exception): string {
-                            return $exception->getMessage();
-                        }, $exceptions)
+                        array_map(fn(ValidationException $exception): string => $exception->getMessage(), $exceptions)
                     )
                 );
         }

@@ -5,6 +5,7 @@ namespace PHPModelGenerator\Tests\Filter;
 use DateTime;
 use Exception;
 use PHPModelGenerator\Filter\DateTime as DateTimeFilter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -15,11 +16,9 @@ use PHPUnit\Framework\TestCase;
 class DateTimeTest extends TestCase
 {
     /**
-     * @dataProvider dateTimeDataProvider
-     *
      * @param string|null $input
-     * @param string|null $output
      */
+    #[DataProvider('dateTimeDataProvider')]
     public function testDateTimeFilter(string | int | null $input, ?string $output): void
     {
         $result = DateTimeFilter::filter($input);
@@ -31,7 +30,7 @@ class DateTimeTest extends TestCase
         }
     }
 
-    public function dateTimeDataProvider(): array
+    public static function dateTimeDataProvider(): array
     {
         return [
             'null' => [null, null],

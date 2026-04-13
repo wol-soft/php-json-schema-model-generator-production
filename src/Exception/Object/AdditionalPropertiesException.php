@@ -13,23 +13,17 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class AdditionalPropertiesException extends ValidationException
 {
-    /** @var string[] */
-    protected $additionalProperties;
-
     /**
      * NotAllowedAdditionalPropertiesException constructor.
      *
      * @param $providedValue
-     * @param string $propertyName
      * @param string[] $additionalProperties
      */
-    public function __construct($providedValue, string $propertyName, array $additionalProperties)
+    public function __construct($providedValue, string $propertyName, protected array $additionalProperties)
     {
-        $this->additionalProperties = $additionalProperties;
-
         parent::__construct(
             "Provided JSON for $propertyName contains not allowed additional properties [" .
-                join(", ", $additionalProperties) . ']',
+                join(", ", $this->additionalProperties) . ']',
             $propertyName,
             $providedValue
         );

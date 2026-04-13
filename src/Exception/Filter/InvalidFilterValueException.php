@@ -14,26 +14,18 @@ use Throwable;
  */
 class InvalidFilterValueException extends ValidationException
 {
-    /** @var string */
-    protected $filterToken;
-
     /**
      * InvalidFilterValueException constructor.
      *
      * @param           $providedValue
-     * @param string    $propertyName
-     * @param string    $filterToken
-     * @param Throwable $filterException
      */
-    public function __construct($providedValue, string $propertyName, string $filterToken, Throwable $filterException)
+    public function __construct($providedValue, string $propertyName, protected string $filterToken, Throwable $filterException)
     {
-        $this->filterToken = $filterToken;
-
         parent::__construct(
             sprintf(
                 'Invalid value for property %s denied by filter %s: %s',
                 $propertyName,
-                $filterToken,
+                $this->filterToken,
                 $filterException->getMessage()
             ),
             $propertyName,
@@ -43,17 +35,11 @@ class InvalidFilterValueException extends ValidationException
         );
     }
 
-    /**
-     * @return string
-     */
     public function getFilterToken(): string
     {
         return $this->filterToken;
     }
 
-    /**
-     * @return Throwable
-     */
     public function getFilterException(): Throwable
     {
         return $this->getPrevious();

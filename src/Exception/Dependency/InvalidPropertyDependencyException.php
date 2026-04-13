@@ -13,31 +13,21 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class InvalidPropertyDependencyException extends ValidationException
 {
-    /** @var array */
-    protected $missingAttributes;
-
     /**
      * InvalidPropertyDependencyException constructor.
      *
      * @param        $providedValue
-     * @param string $propertyName
-     * @param array  $missingAttributes
      */
-    public function __construct($providedValue, string $propertyName, array $missingAttributes)
+    public function __construct($providedValue, string $propertyName, protected array $missingAttributes)
     {
-        $this->missingAttributes = $missingAttributes;
-
         parent::__construct(
             "Missing required attributes which are dependants of $propertyName:\n  - " .
-                join("\n  - ", $missingAttributes),
+                join("\n  - ", $this->missingAttributes),
             $propertyName,
             $providedValue
         );
     }
 
-    /**
-     * @return array
-     */
     public function getMissingAttributes(): array
     {
         return $this->missingAttributes;
