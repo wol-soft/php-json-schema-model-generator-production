@@ -6,22 +6,21 @@ namespace PHPModelGenerator\Exception\Object;
 
 use PHPModelGenerator\Exception\ValidationException;
 
-/**
- * Class MinLengthException
- *
- * @package PHPModelGenerator\Exception\Object
- */
 class MinPropertiesException extends ValidationException
 {
-    /**
-     * MinPropertiesException constructor.
-     *
-     * @param $providedValue
-     */
-    public function __construct($providedValue, string $propertyName, protected int $minProperties)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        protected int $minProperties,
+        protected int $count,
+    ) {
         parent::__construct(
-            "Provided object for $propertyName must not contain less than {$this->minProperties} properties",
+            sprintf(
+                'Provided object for %s must not contain less than %d properties, %d properties provided',
+                $propertyName,
+                $this->minProperties,
+                $this->count,
+            ),
             $propertyName,
             $providedValue
         );
@@ -30,5 +29,10 @@ class MinPropertiesException extends ValidationException
     public function getMinProperties(): int
     {
         return $this->minProperties;
+    }
+
+    public function getCount(): int
+    {
+        return $this->count;
     }
 }
