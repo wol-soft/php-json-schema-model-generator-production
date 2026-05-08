@@ -4,16 +4,11 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Filter;
 
+use InvalidArgumentException;
 use PHPModelGenerator\ValueObject\ImmutableMediaString as ImmutableMediaStringValue;
 use PHPModelGenerator\ValueObject\MediaString;
 
-/**
- * Filter and serializer callables for the ImmutableMediaString value object.
- *
- * Separated from the value object to keep concerns clean: ImmutableMediaString is a pure data
- * holder, while this class owns the transformation and serialization logic for the filter pipeline.
- */
-class ImmutableMediaString
+class ImmutableMediaString extends AbstractMediaStringFilter
 {
     /**
      * Wrap a raw string in an ImmutableMediaString carrying the schema-defined media type and
@@ -21,12 +16,15 @@ class ImmutableMediaString
      *
      * Pass-through rules:
      *   - null                 → null (nullable property)
-     *   - ImmutableMediaString → returned unchanged (already transformed)
-     *   - MediaString          → converted to ImmutableMediaString preserving the raw value
+     *   - ImmutableMediaString → returned unchanged after validating mediaType/encoding match
+     *   - MediaString          → converted to ImmutableMediaString after validating mediaType/encoding match
      *   - string               → wrapped with mediaType / encoding from $options
      *
      * @param string|MediaString|ImmutableMediaStringValue|null $value
      * @param array{mediaType?: string|null, encoding?: string|null} $options
+     *
+     * @throws InvalidArgumentException when a pre-existing wrapper's mediaType or encoding
+     *                                  does not match the schema-declared values
      */
     public static function filter(
         string|MediaString|ImmutableMediaStringValue|null $value,
@@ -36,14 +34,22 @@ class ImmutableMediaString
             return null;
         }
 
-        if ($value instanceof ImmutableMediaStringValue) {
-            return $value;
+        if ($value instanceof ImmutableMediaStringValue || $value instanceof MediaString) {
+            self::assertMetadataMatch($value->getMediaType(), $value->getEncoding(), $options);
+
+            if ($value instanceof ImmutableMediaStringValue) {
+                return $value;
+            }
+
+            return new ImmutableMediaStringValue(
+                $value->getValue(),
+                $options['mediaType'] ?? null,
+                $options['encoding'] ?? null,
+            );
         }
 
-        $rawValue = $value instanceof MediaString ? $value->getValue() : $value;
-
         return new ImmutableMediaStringValue(
-            $rawValue,
+            $value,
             $options['mediaType'] ?? null,
             $options['encoding'] ?? null,
         );
