@@ -90,12 +90,12 @@ trait SerializableTrait
     /**
      * Get a representation of the current state
      *
-     * @param array $except                provide a list of properties which shouldn't be contained in the
-     *                                     resulting JSON. eg. if you want to return an user model and don't
-     *                                     want the password to be included
+     * @param array $except                provide a list of properties which shouldn't be contained in the resulting
+     *                                     JSON. eg. if you want to return an user model and don't want the password
+     *                                     to be included
      * @param int $depth                   the maximum level of object nesting. Must be greater than 0
-     * @param bool $emptyObjectsAsStdClass If set to true, the wrapping data structure for empty objects
-     *                                     will be an stdClass. Array otherwise
+     * @param bool $emptyObjectsAsStdClass If set to true, the wrapping data structure for empty objects will be an
+     *                                     stdClass. Array otherwise
      *
      * @return array|stdClass
      */

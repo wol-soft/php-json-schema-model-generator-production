@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Generic;
 
@@ -26,7 +26,8 @@ class InvalidTypeException extends ValidationException
                 'Invalid type for %s. Requires %s, got %s',
                 $propertyName,
                 is_array($this->expectedType) ? '[' . join(', ', $this->expectedType) . ']' : $this->expectedType,
-                is_object($providedValue) ? $providedValue::class : gettype($providedValue)),
+                is_object($providedValue) ? $providedValue::class : gettype($providedValue)
+            ),
             $propertyName,
             $providedValue
         );

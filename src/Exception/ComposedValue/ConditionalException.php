@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\ComposedValue;
 
@@ -52,7 +52,7 @@ class ConditionalException extends ValidationException
 
         $message .= $this->ifException
             ? "  - Condition: Failed" . $this->getExceptionMessage($this->ifException)
-            :'  - Condition: Valid';
+            : '  - Condition: Valid';
 
         return $message . "\n  - Conditional branch failed:" .
             $this->getExceptionMessage($this->thenException ?: $this->elseException);
@@ -63,7 +63,10 @@ class ConditionalException extends ValidationException
         return $exception instanceof ErrorRegistryExceptionInterface
             ? implode(
                     "\n    * ",
-                    array_map(fn(ValidationException $exception): string => $exception->getMessage(), $exception->getErrors())
+                    array_map(
+                        fn(ValidationException $exception): string => $exception->getMessage(),
+                        $exception->getErrors(),
+                    ),
                 )
             : "\n    * " . $exception->getMessage();
     }
