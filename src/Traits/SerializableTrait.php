@@ -105,10 +105,10 @@ trait SerializableTrait
         $modelData = [];
 
         $localExcept = $except;
-        if (isset($this->skipNotProvidedPropertiesMap, $this->rawModelDataInput)) {
+        if (isset($this->_skipNotProvidedPropertiesMap, $this->_rawModelDataInput)) {
             $localExcept = array_merge(
                 $localExcept,
-                array_diff($this->skipNotProvidedPropertiesMap, array_keys($this->rawModelDataInput))
+                array_diff($this->_skipNotProvidedPropertiesMap, array_keys($this->_rawModelDataInput))
             );
         }
 
