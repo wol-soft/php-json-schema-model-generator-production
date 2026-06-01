@@ -135,6 +135,19 @@ trait SerializableTrait
             );
         }
 
+        // Additional properties are merged before tagged properties so that tagged properties take precedence.
+        if (property_exists($this, '_additionalProperties')) {
+            $modelData = array_merge(
+                $this->_serializeAdditionalProperties($depth, $except, $emptyObjectsAsStdClass),
+                $modelData,
+            );
+        }
+
+        // Pattern properties fill any remaining keys not already present (tagged properties take precedence).
+        if (property_exists($this, '_patternProperties')) {
+            $modelData += $this->_serializePatternProperties($depth, $except);
+        }
+
         $data = $this->_resolveSerializationHook($modelData, $depth, $except);
 
         if ($emptyObjectsAsStdClass && empty($data)) {
@@ -200,6 +213,47 @@ trait SerializableTrait
     protected function _resolveSerializationHook(array $data, int $depth, array $except): array
     {
         return $data;
+    }
+
+    /**
+     * Serializes the model's additional-properties bag.
+     *
+     * Overridden in generated classes when a transforming filter must run before serialization.
+     * Only called when property_exists($this, '_additionalProperties') is true.
+     */
+    protected function _serializeAdditionalProperties(int $depth, array $except, bool $emptyObjectsAsStdClass): array
+    {
+        return (array) $this->_getSerializedValue(
+            $this->_additionalProperties,
+            $depth,
+            $except,
+            $emptyObjectsAsStdClass,
+        );
+    }
+
+    /**
+     * Serializes the model's pattern-properties bags.
+     *
+     * Only called when property_exists($this, '_patternProperties') is true.
+     */
+    protected function _serializePatternProperties(int $depth, array $except): array
+    {
+        $serializedPatternProperties = [];
+
+        foreach ($this->_patternProperties as $patternKey => $properties) {
+            if ($customSerializer = $this->_getCustomSerializerMethod($patternKey)) {
+                foreach ($this->{$customSerializer}() as $propertyKey => $value) {
+                    $serializedPatternProperties[$propertyKey] = $this->_getSerializedValue($value, $depth, $except);
+                }
+                continue;
+            }
+
+            foreach ($properties as $propertyKey => $value) {
+                $serializedPatternProperties[$propertyKey] = $this->_getSerializedValue($value, $depth, $except);
+            }
+        }
+
+        return $serializedPatternProperties;
     }
 
     private function _getSerializedValue($value, int $depth, array $except, bool $emptyObjectsAsStdClass = false)
