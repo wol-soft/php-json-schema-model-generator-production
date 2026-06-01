@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Interfaces;
 
+use PHPModelGenerator\Accessor\Meta;
+
 /**
  * Interface JSONModelInterface
  *
@@ -11,8 +13,5 @@ namespace PHPModelGenerator\Interfaces;
  */
 interface JSONModelInterface
 {
-    /**
-     * Get the raw input used to set up the model
-     */
-    public function getRawModelDataInput(): array;
+    public function meta(): Meta;
 }
