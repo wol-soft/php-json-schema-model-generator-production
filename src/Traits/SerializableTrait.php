@@ -57,7 +57,7 @@ trait SerializableTrait
             return false;
         }
 
-        return json_encode($this->getValues($depth, $except, true), $options, $depth);
+        return json_encode($this->_getValues($depth, $except, true), $options, $depth);
     }
 
     /**
@@ -66,7 +66,7 @@ trait SerializableTrait
     #[\ReturnTypeWillChange]
     public function jsonSerialize(array $except = [])
     {
-        return $this->getValues(512, $except, true);
+        return $this->_getValues(512, $except, true);
     }
 
     /**
@@ -84,7 +84,7 @@ trait SerializableTrait
             return false;
         }
 
-        return $this->getValues($depth, $except, false);
+        return $this->_getValues($depth, $except, false);
     }
 
     /**
@@ -99,7 +99,7 @@ trait SerializableTrait
      *
      * @return array|stdClass
      */
-    private function getValues(int $depth, array $except, bool $emptyObjectsAsStdClass)
+    private function _getValues(int $depth, array $except, bool $emptyObjectsAsStdClass)
     {
         $depth--;
         $modelData = [];
@@ -112,13 +112,13 @@ trait SerializableTrait
             );
         }
 
-        foreach ($this->getPropertySchemaNames() as $phpName => $schemaName) {
+        foreach ($this->_getPropertySchemaNames() as $phpName => $schemaName) {
             if (in_array($schemaName, $localExcept, true)) {
                 continue;
             }
 
-            if ($customSerializer = $this->getCustomSerializerMethod($phpName)) {
-                $modelData[$schemaName] = $this->getSerializedValue(
+            if ($customSerializer = $this->_getCustomSerializerMethod($phpName)) {
+                $modelData[$schemaName] = $this->_getSerializedValue(
                     $this->{$customSerializer}(),
                     $depth,
                     $except,
@@ -127,7 +127,7 @@ trait SerializableTrait
                 continue;
             }
 
-            $modelData[$schemaName] = $this->getSerializedValue(
+            $modelData[$schemaName] = $this->_getSerializedValue(
                 $this->{$phpName},
                 $depth,
                 $except,
@@ -135,7 +135,7 @@ trait SerializableTrait
             );
         }
 
-        $data = $this->resolveSerializationHook($modelData, $depth, $except);
+        $data = $this->_resolveSerializationHook($modelData, $depth, $except);
 
         if ($emptyObjectsAsStdClass && empty($data)) {
             return new stdClass();
@@ -160,7 +160,7 @@ trait SerializableTrait
      *
      * @return array<string, string>
      */
-    private function getPropertySchemaNames(): array
+    private function _getPropertySchemaNames(): array
     {
         if (isset(self::$propertySchemaNames[static::class])) {
             return self::$propertySchemaNames[static::class];
@@ -197,17 +197,17 @@ trait SerializableTrait
     /**
      * Function can be overwritten by classes using the trait to hook into serialization
      */
-    protected function resolveSerializationHook(array $data, int $depth, array $except): array
+    protected function _resolveSerializationHook(array $data, int $depth, array $except): array
     {
         return $data;
     }
 
-    private function getSerializedValue($value, int $depth, array $except, bool $emptyObjectsAsStdClass = false)
+    private function _getSerializedValue($value, int $depth, array $except, bool $emptyObjectsAsStdClass = false)
     {
         if (is_array($value)) {
             $subData = [];
             foreach ($value as $subKey => $element) {
-                $subData[$subKey] = $this->getSerializedValue(
+                $subData[$subKey] = $this->_getSerializedValue(
                     $element,
                     $depth - 1,
                     $except,
@@ -217,10 +217,10 @@ trait SerializableTrait
             return $subData;
         }
 
-        return $this->evaluateAttribute($value, $depth, $except, $emptyObjectsAsStdClass);
+        return $this->_evaluateAttribute($value, $depth, $except, $emptyObjectsAsStdClass);
     }
 
-    private function evaluateAttribute($attribute, int $depth, array $except, bool $emptyObjectsAsStdClass)
+    private function _evaluateAttribute($attribute, int $depth, array $except, bool $emptyObjectsAsStdClass)
     {
         if (!is_object($attribute)) {
             return $attribute;
@@ -268,10 +268,10 @@ trait SerializableTrait
         return $data;
     }
 
-    private function getCustomSerializerMethod(string $property)
+    private function _getCustomSerializerMethod(string $property)
     {
         // Cache key includes the concrete class so that subclasses with additional
-        // serialize*() methods are discovered independently of their parent class.
+        // _serialize*() methods are discovered independently of their parent class.
         // array_key_exists is used (not isset) because the cached "no serializer"
         // sentinel is false, and isset() returns false for null but true for false.
         $cacheKey = static::class . '::' . $property;
@@ -279,7 +279,7 @@ trait SerializableTrait
             return self::$customSerializer[$cacheKey];
         }
 
-        $customSerializer = 'serialize' . ucfirst($property);
+        $customSerializer = '_serialize' . ucfirst($property);
         if (!method_exists($this, $customSerializer)) {
             $customSerializer = false;
         }
