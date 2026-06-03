@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Interfaces;
 
+use PHPModelGenerator\Accessor\Meta;
+
 interface BuilderInterface
 {
-    /**
-     * Get the raw input used to set up the model
-     */
-    public function getRawModelDataInput(): array;
+    public function meta(): Meta;
 
     /**
      * Set up a new instance of the class related to the builder with fully validated properties
