@@ -9,7 +9,7 @@ use UnitEnum;
 
 class Enum
 {
-    public static function filter($value, $options): ?UnitEnum
+    public static function filter(string | int $value, $options): ?UnitEnum
     {
         return $value === null ? null : $options['fqcn']::from($value);
     }

@@ -26,8 +26,12 @@ class FormatValidatorFromRegEx implements FormatValidatorInterface
         return $this->pattern;
     }
 
-    public static function validate(string $input, string $pattern = ''): bool
+    public static function validate(?string $input, string $pattern = ''): bool
     {
+        if ($input === null) {
+            return true;
+        }
+
         return preg_match($pattern, $input) === 1;
     }
 }

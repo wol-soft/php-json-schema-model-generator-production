@@ -13,5 +13,5 @@ interface FormatValidatorInterface
      *
      * @return bool
      */
-    public static function validate(string $input): bool;
+    public static function validate(?string $input): bool;
 }
