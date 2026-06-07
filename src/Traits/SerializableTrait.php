@@ -259,7 +259,7 @@ trait SerializableTrait
     /**
      * Public wrapper for _getSerializedValue, called from generated serialization hooks.
      */
-    protected function getSerializedValue($value, int $depth, array $except): array
+    protected function getSerializedValue($value, int $depth, array $except)
     {
         return $this->_getSerializedValue($value, $depth, $except);
     }

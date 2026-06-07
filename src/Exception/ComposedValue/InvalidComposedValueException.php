@@ -30,7 +30,7 @@ abstract class InvalidComposedValueException extends ValidationException
         $this->branchDescriptions = $branchDescriptions;
         $this->discriminatorInfo = $discriminatorInfo;
 
-        parent::__construct($this->buildMessage($propertyName, $providedValue), $propertyName, $providedValue);
+        parent::__construct($this->buildMessage($propertyName), $propertyName, $providedValue);
     }
 
     public function getSucceededCompositionElements(): int
@@ -53,7 +53,7 @@ abstract class InvalidComposedValueException extends ValidationException
         return $this->discriminatorInfo;
     }
 
-    private function buildMessage(string $propertyName, $providedValue): string
+    private function buildMessage(string $propertyName): string
     {
         $compositionIndex = 0;
 
@@ -82,51 +82,5 @@ abstract class InvalidComposedValueException extends ValidationException
                 },
                 ''
             );
-    }
-
-    private function formatProvidedValue($value): string
-    {
-        if ($value === null) {
-            return 'null';
-        }
-
-        if (is_bool($value)) {
-            return $value ? 'true' : 'false';
-        }
-
-        if (is_string($value)) {
-            $truncated = mb_strlen($value) > 80 ? mb_substr($value, 0, 77) . '...' : $value;
-            return "'$truncated'";
-        }
-
-        if (is_int($value) || is_float($value)) {
-            return (string) $value;
-        }
-
-        if (is_array($value)) {
-            return $this->formatArrayValue($value);
-        }
-
-        if (is_object($value)) {
-            $className = get_class($value);
-            $shortName = substr($className, strrpos($className, '\\') !== false ? strrpos($className, '\\') + 1 : 0);
-            return "object($shortName)";
-        }
-
-        return (string) $value;
-    }
-
-    private function formatArrayValue(array $value): string
-    {
-        $keys = array_keys($value);
-        $keyList = array_map(
-            static fn ($k): string => is_string($k) ? "'$k'" : (string) $k,
-            $keys,
-        );
-        $list = implode(', ', array_slice($keyList, 0, 10));
-        if (count($keys) > 10) {
-            $list .= ', ...';
-        }
-        return 'array keys: [' . $list . ']';
     }
 }
