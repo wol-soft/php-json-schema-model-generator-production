@@ -206,32 +206,29 @@ abstract class InvalidComposedValueException extends ValidationException
         }
 
         if (is_array($value)) {
-            $keys = array_keys($value);
-            $keyList = array_map(
-                static fn ($k): string => is_string($k) ? "'$k'" : (string) $k,
-                $keys,
-            );
-            $list = implode(', ', array_slice($keyList, 0, 10));
-            if (count($keys) > 10) {
-                $list .= ', ...';
-            }
-            return 'array keys: [' . $list . ']';
+            return $this->formatArrayValue($value);
         }
 
         if (is_object($value)) {
             $className = get_class($value);
             $shortName = substr($className, strrpos($className, '\\') !== false ? strrpos($className, '\\') + 1 : 0);
-            $props = array_keys(get_object_vars($value));
-            if ($props !== []) {
-                $list = implode(', ', array_slice($props, 0, 10));
-                if (count($props) > 10) {
-                    $list .= ', ...';
-                }
-                return "object($shortName) properties: [$list]";
-            }
             return "object($shortName)";
         }
 
         return (string) $value;
+    }
+
+    private function formatArrayValue(array $value): string
+    {
+        $keys = array_keys($value);
+        $keyList = array_map(
+            static fn ($k): string => is_string($k) ? "'$k'" : (string) $k,
+            $keys,
+        );
+        $list = implode(', ', array_slice($keyList, 0, 10));
+        if (count($keys) > 10) {
+            $list .= ', ...';
+        }
+        return 'array keys: [' . $list . ']';
     }
 }
