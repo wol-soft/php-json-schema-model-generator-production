@@ -256,6 +256,22 @@ trait SerializableTrait
         return $serializedPatternProperties;
     }
 
+    /**
+     * Public wrapper for _getSerializedValue, called from generated serialization hooks.
+     */
+    protected function getSerializedValue($value, int $depth, array $except): array
+    {
+        return $this->_getSerializedValue($value, $depth, $except);
+    }
+
+    /**
+     * Public wrapper for _getCustomSerializerMethod, called from generated serialization hooks.
+     */
+    protected function getCustomSerializerMethod(string $property)
+    {
+        return $this->_getCustomSerializerMethod($property);
+    }
+
     private function _getSerializedValue($value, int $depth, array $except, bool $emptyObjectsAsStdClass = false)
     {
         if (is_array($value)) {

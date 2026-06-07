@@ -6,8 +6,12 @@ namespace PHPModelGenerator\Format;
 
 class UriFormatValidator implements FormatValidatorInterface
 {
-    public static function validate(string $input): bool
+    public static function validate(?string $input): bool
     {
+        if ($input === null) {
+            return true;
+        }
+
         // RFC 3986 absolute URI: must have a scheme and a non-empty authority/path
         if (!filter_var($input, FILTER_VALIDATE_URL)) {
             return false;

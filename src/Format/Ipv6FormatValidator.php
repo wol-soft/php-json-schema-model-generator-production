@@ -6,8 +6,12 @@ namespace PHPModelGenerator\Format;
 
 class Ipv6FormatValidator implements FormatValidatorInterface
 {
-    public static function validate(string $input): bool
+    public static function validate(?string $input): bool
     {
+        if ($input === null) {
+            return true;
+        }
+
         return filter_var($input, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false;
     }
 }

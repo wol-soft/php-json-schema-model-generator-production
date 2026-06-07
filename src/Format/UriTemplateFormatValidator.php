@@ -6,8 +6,12 @@ namespace PHPModelGenerator\Format;
 
 class UriTemplateFormatValidator implements FormatValidatorInterface
 {
-    public static function validate(string $input): bool
+    public static function validate(?string $input): bool
     {
+        if ($input === null) {
+            return true;
+        }
+
         // RFC 6570 URI Template: no spaces and all braces must be properly closed
         if (preg_match('/\s/', $input)) {
             return false;
