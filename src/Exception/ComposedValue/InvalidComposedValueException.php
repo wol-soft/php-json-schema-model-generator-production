@@ -30,7 +30,7 @@ abstract class InvalidComposedValueException extends ValidationException
         $this->branchDescriptions = $branchDescriptions;
         $this->discriminatorInfo = $discriminatorInfo;
 
-        parent::__construct($this->buildMessage($propertyName), $propertyName, $providedValue);
+        parent::__construct($this->buildMessage($propertyName, $providedValue), $propertyName, $providedValue);
     }
 
     public function getSucceededCompositionElements(): int
@@ -53,137 +53,35 @@ abstract class InvalidComposedValueException extends ValidationException
         return $this->discriminatorInfo;
     }
 
-    private function buildMessage(string $propertyName): string
+    private function buildMessage(string $propertyName, $providedValue): string
     {
-        $totalBranches = $this->branchDescriptions !== []
-            ? count($this->branchDescriptions)
-            : count($this->compositionErrorCollection);
-        $succeeded = $this->succeededCompositionElements;
-        $keyword = static::COMPOSED_KEYWORD ?: 'composition';
-        $header = $this->buildHeader($propertyName, $succeeded, $totalBranches, $keyword);
+        $compositionIndex = 0;
 
-        $hasDetailedErrors = $this->compositionErrorCollection !== [];
+        return "Invalid value for $propertyName declined by composition constraint.\n  " .
+            sprintf(static::COMPOSED_ERROR_MESSAGE, $this->succeededCompositionElements) .
+            array_reduce(
+                $this->compositionErrorCollection,
+                function (string $carry, ErrorRegistryExceptionInterface $exception) use (&$compositionIndex): string {
+                    $index = ++$compositionIndex;
+                    $description = $this->branchDescriptions[$index - 1] ?? '';
 
-        if ($hasDetailedErrors) {
-            $matchedLines = [];
-            $failedLines = [];
+                    $line = "  - Composition element #$index";
+                    if ($description !== '') {
+                        $line .= " ($description)";
+                    }
 
-            $branchCount = count($this->compositionErrorCollection);
-
-            for ($i = 0; $i < $branchCount; $i++) {
-                $branchNum = $i + 1;
-                $description = $this->branchDescriptions[$i] ?? '';
-
-                $line = "  #$branchNum";
-                if ($description !== '') {
-                    $line .= " ($description)";
-                }
-
-                $errors = $this->compositionErrorCollection[$i]->getErrors();
-                if ($errors !== []) {
-                    $errorTexts = array_map(
-                        static fn (ValidationException $e): string => $e->getMessage(),
-                        $errors,
-                    );
-                    $line .= ": Failed\n    * " . implode("\n    * ", $errorTexts);
-                    $failedLines[] = $line;
-                } else {
-                    $line .= ': Valid';
-                    $matchedLines[] = $line;
-                }
-            }
-
-            $sections = [];
-
-            if ($this->isAllFailedCase($succeeded, $totalBranches)) {
-                $sections[] = "  [ALL BRANCHES FAILED]\n" . implode("\n", $failedLines);
-            } else {
-                if ($matchedLines !== []) {
-                    $matchLabel = $this->getMatchLabel($succeeded, $totalBranches);
-                    $sections[] = "  $matchLabel\n" . implode("\n", $matchedLines);
-                }
-
-                if ($failedLines !== []) {
-                    $sections[] = "  [FAILED]\n" . implode("\n", $failedLines);
-                }
-            }
-
-            if ($sections !== []) {
-                $header .= "\n" . implode("\n\n", $sections);
-            }
-        }
-
-        $header .= "\n\n  Provided value: " . $this->formatProvidedValue($this->providedValue);
-
-        return $header;
-    }
-
-    private function buildHeader(string $propertyName, int $succeeded, int $total, string $keyword): string
-    {
-        $base = "Invalid value for '$propertyName'. Must match ";
-
-        if (static::COMPOSED_ERROR_MESSAGE === 'Requires to match all composition elements but matched %s elements.') {
-            return $base . "all $total ${keyword} branches, but only $succeeded matched.";
-        }
-
-        if (static::COMPOSED_ERROR_MESSAGE === 'Requires to match at least one composition element.') {
-            return $base . "at least 1 of $total ${keyword} branches, but 0 matched.";
-        }
-
-        if (static::COMPOSED_ERROR_MESSAGE === 'Requires to match one composition element but matched %s elements.') {
-            $discriminatorHint = '';
-            if (
-                $this->discriminatorInfo !== []
-                && isset($this->discriminatorInfo['propertyName'])
-                && isset($this->discriminatorInfo['mapping'])
-            ) {
-                $discriminatorHint = $this->buildDiscriminatorHint();
-            }
-
-            if ($succeeded === 0) {
-                $msg = "exactly 1 of $total ${keyword} branches, but 0 matched.";
-                return $discriminatorHint !== ''
-                    ? "$base$msg\n\n  $discriminatorHint"
-                    : "$base$msg";
-            }
-
-            $msg = "exactly 1 of $total ${keyword} branches, but $succeeded matched.";
-            return $discriminatorHint !== ''
-                ? "$base$msg\n\n  $discriminatorHint"
-                : "$base$msg";
-        }
-
-        if (static::COMPOSED_ERROR_MESSAGE === 'Requires to match none composition element but matched %s elements.') {
-            return $base . "none of the $total ${keyword} branches, but $succeeded matched.";
-        }
-
-        return $base . sprintf(static::COMPOSED_ERROR_MESSAGE, $succeeded);
-    }
-
-    private function isAllFailedCase(int $succeeded, int $total): bool
-    {
-        return $succeeded === 0 && $total > 0;
-    }
-
-    private function getMatchLabel(int $succeeded, int $total): string
-    {
-        $isOneOf = static::COMPOSED_ERROR_MESSAGE === 'Requires to match one composition element but matched %s elements.';
-
-        if ($isOneOf && $succeeded > 1) {
-            return "[MATCHED - $succeeded branches match, only 1 should]";
-        }
-
-        return '[MATCHED]';
-    }
-
-    private function buildDiscriminatorHint(): string
-    {
-        $propName = $this->discriminatorInfo['propertyName'];
-        $mapping = $this->discriminatorInfo['mapping'];
-        $validValues = array_keys($mapping);
-        $validValuesStr = implode("', '", $validValues);
-
-        return "  Discriminator: property '$propName' determines which branch applies.\n  Expected '$propName' to be one of: '$validValuesStr'.";
+                    return "$carry\n$line" . (
+                        $exception->getErrors()
+                            ? ": Failed\n    * " .
+                                implode(
+                                    "\n    * ",
+                                    array_map(fn(ValidationException $exception): string => $exception->getMessage(), $exception->getErrors())
+                                )
+                            : ': Valid'
+                        );
+                },
+                ''
+            );
     }
 
     private function formatProvidedValue($value): string
