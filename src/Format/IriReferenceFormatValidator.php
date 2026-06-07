@@ -6,8 +6,12 @@ namespace PHPModelGenerator\Format;
 
 class IriReferenceFormatValidator implements FormatValidatorInterface
 {
-    public static function validate(string $input): bool
+    public static function validate(?string $input): bool
     {
+        if ($input === null) {
+            return true;
+        }
+
         // An IRI-reference is either an absolute IRI or a relative reference allowing Unicode.
         if (IriFormatValidator::validate($input)) {
             return true;

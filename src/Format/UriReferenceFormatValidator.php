@@ -6,8 +6,12 @@ namespace PHPModelGenerator\Format;
 
 class UriReferenceFormatValidator implements FormatValidatorInterface
 {
-    public static function validate(string $input): bool
+    public static function validate(?string $input): bool
     {
+        if ($input === null) {
+            return true;
+        }
+
         // Empty string is a valid URI-reference (refers to the current document)
         if ($input === '') {
             return true;

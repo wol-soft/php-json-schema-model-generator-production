@@ -7,27 +7,30 @@ namespace PHPModelGenerator\Exception\ComposedValue;
 use PHPModelGenerator\Exception\ErrorRegistryExceptionInterface;
 use PHPModelGenerator\Exception\ValidationException;
 
-/**
- * Class InvalidComposedValueException
- *
- * @package PHPModelGenerator\Exception\ComposedValue
- */
 abstract class InvalidComposedValueException extends ValidationException
 {
     protected const COMPOSED_ERROR_MESSAGE = '';
-    /**
-     * InvalidComposedValueException constructor.
-     *
-     * @param $providedValue
-     * @param ValidationException[][] $compositionErrorCollection
-     */
+    protected const COMPOSED_KEYWORD = '';
+
+    protected int $succeededCompositionElements;
+    protected array $compositionErrorCollection;
+    protected array $branchDescriptions;
+    protected array $discriminatorInfo;
+
     public function __construct(
         $providedValue,
         string $propertyName,
-        protected int $succeededCompositionElements,
-        protected array $compositionErrorCollection
+        int $succeededCompositionElements,
+        array $compositionErrorCollection,
+        array $branchDescriptions = [],
+        array $discriminatorInfo = [],
     ) {
-        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
+        $this->succeededCompositionElements = $succeededCompositionElements;
+        $this->compositionErrorCollection = $compositionErrorCollection;
+        $this->branchDescriptions = $branchDescriptions;
+        $this->discriminatorInfo = $discriminatorInfo;
+
+        parent::__construct($this->buildMessage($propertyName), $propertyName, $providedValue);
     }
 
     public function getSucceededCompositionElements(): int
@@ -35,15 +38,22 @@ abstract class InvalidComposedValueException extends ValidationException
         return $this->succeededCompositionElements;
     }
 
-    /**
-     * @return ValidationException[][]
-     */
     public function getCompositionErrorCollection(): array
     {
         return $this->compositionErrorCollection;
     }
 
-    protected function getErrorMessage(string $propertyName): string
+    public function getBranchDescriptions(): array
+    {
+        return $this->branchDescriptions;
+    }
+
+    public function getDiscriminatorInfo(): array
+    {
+        return $this->discriminatorInfo;
+    }
+
+    private function buildMessage(string $propertyName): string
     {
         $compositionIndex = 0;
 
@@ -52,7 +62,15 @@ abstract class InvalidComposedValueException extends ValidationException
             array_reduce(
                 $this->compositionErrorCollection,
                 function (string $carry, ErrorRegistryExceptionInterface $exception) use (&$compositionIndex): string {
-                    return "$carry\n  - Composition element #" . ++$compositionIndex . (
+                    $index = ++$compositionIndex;
+                    $description = $this->branchDescriptions[$index - 1] ?? '';
+
+                    $line = "  - Composition element #$index";
+                    if ($description !== '') {
+                        $line .= " ($description)";
+                    }
+
+                    return "$carry\n$line" . (
                         $exception->getErrors()
                             ? ": Failed\n    * " .
                                 implode(

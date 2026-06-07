@@ -6,8 +6,12 @@ namespace PHPModelGenerator\Format;
 
 class IriFormatValidator implements FormatValidatorInterface
 {
-    public static function validate(string $input): bool
+    public static function validate(?string $input): bool
     {
+        if ($input === null) {
+            return true;
+        }
+
         // An IRI (RFC 3987) extends URIs to allow Unicode characters.
         // Require a scheme followed by :// and a non-empty authority/path,
         // with no control characters or unencoded spaces.
