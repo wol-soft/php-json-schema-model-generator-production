@@ -148,6 +148,14 @@ trait SerializableTrait
             $modelData += $this->_serializePatternProperties($depth, $except);
         }
 
+        // Unevaluated properties are a catch-all for keys not claimed by any of the above. The
+        // buckets are non-overlapping by construction (the runtime accumulator rebuild credits
+        // properties / patternProperties / additionalProperties / composition branches before
+        // unevaluatedProperties fires) so the merge order is purely cosmetic.
+        if (property_exists($this, '_unevaluatedProperties')) {
+            $modelData += $this->_serializeUnevaluatedProperties($depth, $except, $emptyObjectsAsStdClass);
+        }
+
         $data = $this->_resolveSerializationHook($modelData, $depth, $except);
 
         if ($emptyObjectsAsStdClass && empty($data)) {
@@ -225,6 +233,22 @@ trait SerializableTrait
     {
         return (array) $this->_getSerializedValue(
             $this->_additionalProperties,
+            $depth,
+            $except,
+            $emptyObjectsAsStdClass,
+        );
+    }
+
+    /**
+     * Serializes the model's unevaluated-properties bag.
+     *
+     * Overridden in generated classes when a transforming filter must run before serialization.
+     * Only called when property_exists($this, '_unevaluatedProperties') is true.
+     */
+    protected function _serializeUnevaluatedProperties(int $depth, array $except, bool $emptyObjectsAsStdClass): array
+    {
+        return (array) $this->_getSerializedValue(
+            $this->_unevaluatedProperties,
             $depth,
             $except,
             $emptyObjectsAsStdClass,

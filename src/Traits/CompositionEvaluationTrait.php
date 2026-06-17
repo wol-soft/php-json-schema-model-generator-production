@@ -90,11 +90,28 @@ trait CompositionEvaluationTrait
             }
         }
 
+        // patternProperties annotates per-key only when the key's value-validation against
+        // the pattern's subschema succeeded (decision 0.5). `_patternProperties` is the
+        // authoritative record of successfully-validated pattern entries — its rollback
+        // discipline in PatternProperties.phptpl removes entries when validation fails. A
+        // key that matches a pattern regex but whose stored value differs from the current
+        // model value indicates the most recent attempt failed (and was rolled back), so
+        // the key is treated as unevaluated.
         foreach ($patternPatterns as $pattern) {
             foreach ($modelKeys as $modelKey) {
-                if (!isset($seen[$modelKey]) && preg_match($pattern, (string) $modelKey)) {
-                    $evaluated[] = $modelKey;
-                    $seen[$modelKey] = true;
+                if (isset($seen[$modelKey]) || !preg_match($pattern, (string) $modelKey)) {
+                    continue;
+                }
+
+                foreach ($this->_patternProperties ?? [] as $patternEntries) {
+                    if (
+                        array_key_exists($modelKey, $patternEntries)
+                        && $patternEntries[$modelKey] === $modelData[$modelKey]
+                    ) {
+                        $evaluated[] = $modelKey;
+                        $seen[$modelKey] = true;
+                        break;
+                    }
                 }
             }
         }
