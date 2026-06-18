@@ -64,7 +64,9 @@ trait CompositionEvaluationTrait
      *               remaining model key is treated as evaluated.
      *   - string[]  inline branch succeeded; the listed names are evaluated.
      *   - object    nested-schema instance for a successful branch; queried via
-     *               getEvaluatedProperties().
+     *               `_getEvaluatedProperties()` (underscore-prefixed and marked `#[Internal]`
+     *               on the generated class so it cannot collide with a user-declared
+     *               `evaluatedProperties` property's auto-generated getter).
      *
      * @param array    $modelData                Raw model input data.
      * @param string[] $declaredPropertyNames    Names declared in the local `properties`.
@@ -125,7 +127,7 @@ trait CompositionEvaluationTrait
                     return [];
                 }
                 if (is_object($slot)) {
-                    foreach ($slot->getEvaluatedProperties() as $propertyName) {
+                    foreach ($slot->_getEvaluatedProperties() as $propertyName) {
                         if (!isset($seen[$propertyName])) {
                             $evaluated[] = $propertyName;
                             $seen[$propertyName] = true;
