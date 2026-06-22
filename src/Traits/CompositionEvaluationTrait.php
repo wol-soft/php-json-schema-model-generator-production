@@ -93,12 +93,14 @@ trait CompositionEvaluationTrait
         }
 
         // patternProperties annotates per-key only when the key's value-validation against
-        // the pattern's subschema succeeded (decision 0.5). `_patternProperties` is the
-        // authoritative record of successfully-validated pattern entries — its rollback
-        // discipline in PatternProperties.phptpl removes entries when validation fails. A
-        // key that matches a pattern regex but whose stored value differs from the current
-        // model value indicates the most recent attempt failed (and was rolled back), so
-        // the key is treated as unevaluated.
+        // the pattern's subschema succeeded — a key that matched the regex but whose value
+        // failed must NOT be credited as evaluated, otherwise an enclosing
+        // unevaluatedProperties accumulator would incorrectly skip it. `_patternProperties`
+        // is the authoritative record of successfully-validated pattern entries — its
+        // rollback discipline in PatternProperties.phptpl removes entries when validation
+        // fails. A key that matches a pattern regex but whose stored value differs from the
+        // current model value indicates the most recent attempt failed (and was rolled
+        // back), so the key is treated as unevaluated.
         foreach ($patternPatterns as $pattern) {
             foreach ($modelKeys as $modelKey) {
                 if (isset($seen[$modelKey]) || !preg_match($pattern, (string) $modelKey)) {
@@ -145,5 +147,67 @@ trait CompositionEvaluationTrait
         }
 
         return array_values(array_diff($modelKeys, $evaluated));
+    }
+
+    /**
+     * Computes the list of array indices not evaluated by any local applicator (items,
+     * additionalItems, contains) or any successful composition branch. Used by the generated
+     * unevaluatedItems validator.
+     *
+     * Generation-time guarantees from UnevaluatedItemsValidatorFactory skip emission entirely
+     * for the three array-side dead-code shapes — `items: false`, `items: {schema}`, and
+     * `additionalItems: false` with tuple `items` — so this method never needs to short-circuit
+     * those cases at runtime.
+     *
+     * The composition-branch slots in `$this->_compositionEvaluations` follow the same envelope
+     * as the property-side rebuild but with `'kind' => 'array'` and integer-keyed `'evaluated'`
+     * sets. The `'kind'` tag prevents an object-typed branch's evaluated property names from
+     * being misread as array indices on mixed-type composition (and vice versa).
+     *
+     * `$this->_evaluatedItemIndices[$propertyName]` carries indices contributed by sibling
+     * array-side validators (items, additionalItems, contains, and an inner unevaluatedItems
+     * validator running within a successful composition branch). The rollback registry
+     * restores the field on `populate()` failure, and the validator template snapshots and
+     * restores it on per-call validation failure — so a failing composition branch's inner
+     * writes cannot leak.
+     *
+     * @param array  $value                    The raw array value being validated.
+     * @param string $propertyName             Name of the array property; used to key into
+     *                                         `_evaluatedItemIndices`.
+     * @param int[]  $compositionValidatorKeys Indexes into `_compositionEvaluations` to consult.
+     *
+     * @return int[] Zero-based indices of array entries not evaluated by any applicator.
+     */
+    protected function collectUnevaluatedIndices(
+        array $value,
+        string $propertyName,
+        array $compositionValidatorKeys,
+    ): array {
+        $evaluated = [];
+
+        foreach (($this->_evaluatedItemIndices ?? [])[$propertyName] ?? [] as $index => $_) {
+            $evaluated[$index] = true;
+        }
+
+        foreach ($compositionValidatorKeys as $compositionValidatorIndex) {
+            foreach ($this->_compositionEvaluations[$compositionValidatorIndex] ?? [] as $slot) {
+                if (!is_array($slot) || ($slot['kind'] ?? null) !== 'array' || !($slot['success'] ?? false)) {
+                    continue;
+                }
+
+                foreach ($slot['evaluated'] ?? [] as $index => $_) {
+                    $evaluated[$index] = true;
+                }
+            }
+        }
+
+        $unevaluated = [];
+        foreach (array_keys($value) as $index) {
+            if (!isset($evaluated[$index])) {
+                $unevaluated[] = $index;
+            }
+        }
+
+        return $unevaluated;
     }
 }
