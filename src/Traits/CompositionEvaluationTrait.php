@@ -159,46 +159,33 @@ trait CompositionEvaluationTrait
      * `additionalItems: false` with tuple `items` — so this method never needs to short-circuit
      * those cases at runtime.
      *
-     * The composition-branch slots in `$this->_compositionEvaluations` follow the same envelope
-     * as the property-side rebuild but with `'kind' => 'array'` and integer-keyed `'evaluated'`
-     * sets. The `'kind'` tag prevents an object-typed branch's evaluated property names from
-     * being misread as array indices on mixed-type composition (and vice versa).
+     * `$this->_compositionAnnotated[$slotKey]` carries the union of indices claimed by
+     * successful branches of one composition validator. The composition template writes the
+     * union at end-of-IIFE wholesale: an empty entry means the composition failed or
+     * contributed no claims. Each composition validator on the property owns its own slot key
+     * (e.g. `tags_0` for the first composition on `tags`); the caller passes the list of slot
+     * keys it cares about.
      *
      * `$this->_evaluatedItemIndices[$propertyName]` carries indices contributed by sibling
      * array-side validators (items, additionalItems, contains, and an inner unevaluatedItems
-     * validator running within a successful composition branch). The rollback registry
-     * restores the field on `populate()` failure, and the validator template snapshots and
-     * restores it on per-call validation failure — so a failing composition branch's inner
-     * writes cannot leak.
+     * validator running within a successful composition branch).
      *
-     * @param array  $value                    The raw array value being validated.
-     * @param string $propertyName             Name of the array property; used to key into
-     *                                         `_evaluatedItemIndices`.
-     * @param int[]  $compositionValidatorKeys Indexes into `_compositionEvaluations` to consult.
+     * @param array    $value             The raw array value being validated.
+     * @param string   $propertyName      Name of the array property; used to key into
+     *                                    `_evaluatedItemIndices`.
+     * @param string[] $compositionSlotKeys Slot keys into `_compositionAnnotated` to consult.
      *
      * @return int[] Zero-based indices of array entries not evaluated by any applicator.
      */
     protected function collectUnevaluatedIndices(
         array $value,
         string $propertyName,
-        array $compositionValidatorKeys,
+        array $compositionSlotKeys,
     ): array {
-        $evaluated = [];
+        $evaluated = ($this->_evaluatedItemIndices ?? [])[$propertyName] ?? [];
 
-        foreach (($this->_evaluatedItemIndices ?? [])[$propertyName] ?? [] as $index => $_) {
-            $evaluated[$index] = true;
-        }
-
-        foreach ($compositionValidatorKeys as $compositionValidatorIndex) {
-            foreach ($this->_compositionEvaluations[$compositionValidatorIndex] ?? [] as $slot) {
-                if (!is_array($slot) || ($slot['kind'] ?? null) !== 'array' || !($slot['success'] ?? false)) {
-                    continue;
-                }
-
-                foreach ($slot['evaluated'] ?? [] as $index => $_) {
-                    $evaluated[$index] = true;
-                }
-            }
+        foreach ($compositionSlotKeys as $slotKey) {
+            $evaluated += $this->_compositionAnnotated[$slotKey] ?? [];
         }
 
         $unevaluated = [];
