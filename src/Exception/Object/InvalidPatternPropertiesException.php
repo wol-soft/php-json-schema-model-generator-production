@@ -19,9 +19,14 @@ class InvalidPatternPropertiesException extends ValidationException
      * @param $providedValue
      * @param ValidationException[][] $nestedExceptions
      */
-    public function __construct($providedValue, string $propertyName, protected string $pattern, protected $nestedExceptions)
-    {
-        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected string $pattern,
+        protected $nestedExceptions
+    ) {
+        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
     }
 
     /**

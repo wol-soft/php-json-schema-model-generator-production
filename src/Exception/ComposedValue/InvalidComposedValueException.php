@@ -24,10 +24,11 @@ abstract class InvalidComposedValueException extends ValidationException
     public function __construct(
         $providedValue,
         string $propertyName,
+        string $jsonPointer,
         protected int $succeededCompositionElements,
         protected array $compositionErrorCollection
     ) {
-        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
+        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
     }
 
     public function getSucceededCompositionElements(): int

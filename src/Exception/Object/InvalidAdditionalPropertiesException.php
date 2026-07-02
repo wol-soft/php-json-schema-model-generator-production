@@ -22,9 +22,9 @@ class InvalidAdditionalPropertiesException extends ValidationException
      * @param $providedValue
      * @param ValidationException[][] $nestedExceptions
      */
-    public function __construct($providedValue, string $propertyName, protected $nestedExceptions)
+    public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $nestedExceptions)
     {
-        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
+        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
     }
 
     /**

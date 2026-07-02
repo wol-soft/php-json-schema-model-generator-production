@@ -18,12 +18,13 @@ class MinLengthException extends ValidationException
      *
      * @param $providedValue
      */
-    public function __construct($providedValue, string $propertyName, protected int $minimumLength)
+    public function __construct($providedValue, string $propertyName, string $jsonPointer, protected int $minimumLength)
     {
         parent::__construct(
             "Value for $propertyName must not be shorter than {$this->minimumLength}",
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

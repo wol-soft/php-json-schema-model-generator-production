@@ -23,12 +23,13 @@ class ConditionalException extends ValidationException
     public function __construct(
         $providedValue,
         string $propertyName,
+        string $jsonPointer,
         private readonly ?Exception $ifException,
         private readonly ?Exception $thenException,
         private readonly ?Exception $elseException
     ) {
 
-        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
+        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
     }
 
     public function getIfException(): ?Exception
@@ -62,12 +63,12 @@ class ConditionalException extends ValidationException
     {
         return $exception instanceof ErrorRegistryExceptionInterface
             ? implode(
-                    "\n    * ",
-                    array_map(
-                        fn(ValidationException $exception): string => $exception->getMessage(),
-                        $exception->getErrors(),
-                    ),
-                )
+                "\n    * ",
+                array_map(
+                    fn(ValidationException $exception): string => $exception->getMessage(),
+                    $exception->getErrors(),
+                ),
+            )
             : "\n    * " . $exception->getMessage();
     }
 }

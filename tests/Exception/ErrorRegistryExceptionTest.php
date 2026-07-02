@@ -39,7 +39,7 @@ class ErrorRegistryExceptionTest extends TestCase
         $errorRegistry = new ErrorRegistryException();
 
         foreach ($messages as $property => $message) {
-            $errorRegistry->addError(new MaximumException(10, $property, 2));
+            $errorRegistry->addError(new MaximumException(10, $property, '/properties/' . $property, 2));
         }
 
         $this->assertCount(2, $errorRegistry->getErrors());
@@ -52,6 +52,7 @@ class ErrorRegistryExceptionTest extends TestCase
                             'maximum'       => 2,
                             'propertyName'  => 'test1',
                             'providedValue' => 10,
+                            'jsonPointer'   => '/properties/test1',
                             'message'       => 'Value for test1 must not be larger than 2',
                         ],
                     1 =>
@@ -59,6 +60,7 @@ class ErrorRegistryExceptionTest extends TestCase
                             'maximum'       => 2,
                             'propertyName'  => 'test2',
                             'providedValue' => 10,
+                            'jsonPointer'   => '/properties/test2',
                             'message'       => 'Value for test2 must not be larger than 2',
                         ],
                 ],

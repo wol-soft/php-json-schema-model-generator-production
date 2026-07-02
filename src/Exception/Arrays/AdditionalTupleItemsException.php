@@ -18,8 +18,13 @@ class AdditionalTupleItemsException extends ValidationException
      *
      * @param        $providedValue
      */
-    public function __construct($providedValue, string $propertyName, protected int $expectedAmount, protected int $amount)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected int $expectedAmount,
+        protected int $amount
+    ) {
         parent::__construct(
             sprintf(
                 'Tuple array %s contains not allowed additional items. Expected %s items, got %s',
@@ -28,7 +33,8 @@ class AdditionalTupleItemsException extends ValidationException
                 $this->amount
             ),
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

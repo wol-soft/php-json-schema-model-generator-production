@@ -19,12 +19,13 @@ class MultipleOfException extends ValidationException
      * @param $providedValue
      * @param int|float $multipleOf
      */
-    public function __construct($providedValue, string $propertyName, protected $multipleOf)
+    public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $multipleOf)
     {
         parent::__construct(
             "Value for $propertyName must be a multiple of {$this->multipleOf}",
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

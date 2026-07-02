@@ -19,7 +19,7 @@ class InvalidInstanceOfException extends ValidationException
      * @param $providedValue
      * @param string $expectedClass
      */
-    public function __construct($providedValue, string $propertyName, protected $expectedClass)
+    public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $expectedClass)
     {
         parent::__construct(
             sprintf(
@@ -29,7 +29,8 @@ class InvalidInstanceOfException extends ValidationException
                 $providedValue::class
             ),
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

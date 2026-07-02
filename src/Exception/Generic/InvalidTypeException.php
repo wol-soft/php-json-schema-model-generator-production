@@ -19,7 +19,7 @@ class InvalidTypeException extends ValidationException
      * @param $providedValue
      * @param array|string $expectedType
      */
-    public function __construct($providedValue, string $propertyName, protected $expectedType)
+    public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $expectedType)
     {
         parent::__construct(
             sprintf(
@@ -29,7 +29,8 @@ class InvalidTypeException extends ValidationException
                 is_object($providedValue) ? $providedValue::class : gettype($providedValue)
             ),
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 
