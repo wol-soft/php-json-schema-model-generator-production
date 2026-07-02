@@ -18,12 +18,13 @@ class MinItemsException extends ValidationException
      *
      * @param $providedValue
      */
-    public function __construct($providedValue, string $propertyName, protected int $minItems)
+    public function __construct($providedValue, string $propertyName, string $jsonPointer, protected int $minItems)
     {
         parent::__construct(
             "Array $propertyName must not contain less than {$this->minItems} items",
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

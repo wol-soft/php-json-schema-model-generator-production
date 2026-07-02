@@ -18,12 +18,17 @@ class EnumException extends ValidationException
      *
      * @param $providedValue
      */
-    public function __construct($providedValue, string $propertyName, protected array $allowedValues)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected array $allowedValues
+    ) {
         parent::__construct(
             "Invalid value for $propertyName declined by enum constraint",
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

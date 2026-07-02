@@ -19,9 +19,13 @@ class InvalidTupleException extends ValidationException
      * @param $providedValue
      * @param ValidationException[][] $invalidTuples
      */
-    public function __construct($providedValue, string $propertyName, protected array $invalidTuples)
-    {
-        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected array $invalidTuples
+    ) {
+        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
     }
 
     /**

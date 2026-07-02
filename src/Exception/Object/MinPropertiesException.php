@@ -18,12 +18,13 @@ class MinPropertiesException extends ValidationException
      *
      * @param $providedValue
      */
-    public function __construct($providedValue, string $propertyName, protected int $minProperties)
+    public function __construct($providedValue, string $propertyName, string $jsonPointer, protected int $minProperties)
     {
         parent::__construct(
             "Provided object for $propertyName must not contain less than {$this->minProperties} properties",
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

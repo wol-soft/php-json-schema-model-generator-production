@@ -18,12 +18,13 @@ class ContainsException extends ValidationException
      *
      * @param $providedValue
      */
-    public function __construct($providedValue, string $propertyName)
+    public function __construct($providedValue, string $propertyName, string $jsonPointer)
     {
         parent::__construct(
             "No item in array $propertyName matches contains constraint",
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 }

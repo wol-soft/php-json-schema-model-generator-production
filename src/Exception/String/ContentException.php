@@ -12,6 +12,7 @@ class ContentException extends ValidationException
     public function __construct(
         $providedValue,
         string $propertyName,
+        string $jsonPointer,
         protected ?string $expectedMediaType,
         protected ?string $expectedEncoding,
         ?Throwable $previous = null,
@@ -25,6 +26,7 @@ class ContentException extends ValidationException
             "Value for $propertyName does not match the expected content ($description)",
             $propertyName,
             $providedValue,
+            $jsonPointer,
             0,
             $previous,
         );

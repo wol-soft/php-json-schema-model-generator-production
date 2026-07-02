@@ -19,8 +19,13 @@ class InvalidFilterValueException extends ValidationException
      *
      * @param           $providedValue
      */
-    public function __construct($providedValue, string $propertyName, protected string $filterToken, Throwable $filterException)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected string $filterToken,
+        Throwable $filterException
+    ) {
         parent::__construct(
             sprintf(
                 'Invalid value for property %s denied by filter %s: %s',
@@ -30,6 +35,7 @@ class InvalidFilterValueException extends ValidationException
             ),
             $propertyName,
             $providedValue,
+            $jsonPointer,
             0,
             $filterException
         );

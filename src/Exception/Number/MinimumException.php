@@ -19,12 +19,13 @@ class MinimumException extends ValidationException
      * @param $providedValue
      * @param int|float $minimum
      */
-    public function __construct($providedValue, string $propertyName, protected $minimum)
+    public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $minimum)
     {
         parent::__construct(
             "Value for $propertyName must not be smaller than {$this->minimum}",
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

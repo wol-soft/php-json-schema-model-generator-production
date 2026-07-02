@@ -19,12 +19,13 @@ class InvalidConstException extends ValidationException
      * @param $providedValue
      * @param mixed $expectedValue
      */
-    public function __construct($providedValue, string $propertyName, protected $expectedValue)
+    public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $expectedValue)
     {
         parent::__construct(
             "Invalid value for $propertyName declined by const constraint",
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

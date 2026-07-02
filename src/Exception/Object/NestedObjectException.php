@@ -19,8 +19,12 @@ class NestedObjectException extends ValidationException
      *
      * @param $providedValue
      */
-    public function __construct($providedValue, string $propertyName, private readonly Exception $nestedException)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        private readonly Exception $nestedException
+    ) {
         parent::__construct(
             "Invalid nested object for property $propertyName:\n  - " .
                 preg_replace(
@@ -29,7 +33,8 @@ class NestedObjectException extends ValidationException
                     (string) preg_replace("/\n\s/m", "\n     ", $this->nestedException->getMessage())
                 ),
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

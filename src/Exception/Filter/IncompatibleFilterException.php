@@ -18,8 +18,12 @@ class IncompatibleFilterException extends ValidationException
      *
      * @param $providedValue
      */
-    public function __construct($providedValue, string $propertyName, protected string $filterToken)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected string $filterToken
+    ) {
         parent::__construct(
             sprintf(
                 'Filter %s is not compatible with property type %s for property %s',
@@ -28,7 +32,8 @@ class IncompatibleFilterException extends ValidationException
                 $propertyName
             ),
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 
