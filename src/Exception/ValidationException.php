@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception;
 
+use PHPModelGenerator\Attributes\JsonPointer;
 use Throwable;
 
 /**
@@ -22,6 +23,7 @@ abstract class ValidationException extends JSONModelValidationException
         string $message,
         protected string $propertyName,
         protected mixed $providedValue,
+        protected string $jsonPointer,
         $code = 0,
         ?Throwable $previous = null
     ) {
@@ -39,5 +41,13 @@ abstract class ValidationException extends JSONModelValidationException
     public function getProvidedValue()
     {
         return $this->providedValue;
+    }
+
+    /**
+     * The JSON pointer to the schema location of the constraint that rejected the value.
+     */
+    public function getJsonPointer(): JsonPointer
+    {
+        return new JsonPointer($this->jsonPointer);
     }
 }

@@ -8,12 +8,18 @@ use PHPModelGenerator\Exception\ValidationException;
 
 class MinItemsException extends ValidationException
 {
-    public function __construct($providedValue, string $propertyName, protected int $minItems, protected int $count)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected int $minItems,
+        protected int $count,
+    ) {
         parent::__construct(
             "Array $propertyName must not contain less than $this->minItems items, $this->count items provided",
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

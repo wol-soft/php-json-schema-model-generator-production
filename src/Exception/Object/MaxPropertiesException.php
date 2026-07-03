@@ -11,6 +11,7 @@ class MaxPropertiesException extends ValidationException
     public function __construct(
         $providedValue,
         string $propertyName,
+        string $jsonPointer,
         protected int $maxProperties,
         protected int $count,
     ) {
@@ -22,7 +23,8 @@ class MaxPropertiesException extends ValidationException
                 $this->count,
             ),
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

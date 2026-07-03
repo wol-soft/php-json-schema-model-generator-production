@@ -19,9 +19,13 @@ class InvalidItemException extends ValidationException
      * @param $providedValue
      * @param ValidationException[][] $invalidItems
      */
-    public function __construct($providedValue, string $propertyName, protected array $invalidItems)
-    {
-        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue);
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected array $invalidItems
+    ) {
+        parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
     }
 
     /**

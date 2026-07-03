@@ -19,12 +19,13 @@ class ExclusiveMinimumException extends ValidationException
      * @param $providedValue
      * @param int|float $exclusiveMinimum
      */
-    public function __construct($providedValue, string $propertyName, protected $exclusiveMinimum)
+    public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $exclusiveMinimum)
     {
         parent::__construct(
             "Value for $propertyName must be larger than {$this->exclusiveMinimum}",
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

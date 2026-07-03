@@ -18,12 +18,17 @@ class FormatException extends ValidationException
      *
      * @param $providedValue
      */
-    public function __construct($providedValue, string $propertyName, protected string $expectedFormat)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected string $expectedFormat
+    ) {
         parent::__construct(
             "Value for $propertyName must match the format {$this->expectedFormat}",
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

@@ -18,13 +18,18 @@ class InvalidPropertyDependencyException extends ValidationException
      *
      * @param        $providedValue
      */
-    public function __construct($providedValue, string $propertyName, protected array $missingAttributes)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected array $missingAttributes
+    ) {
         parent::__construct(
             "Missing required attributes which are dependants of $propertyName:\n  - " .
                 join("\n  - ", $this->missingAttributes),
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

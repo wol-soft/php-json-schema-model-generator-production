@@ -19,8 +19,12 @@ class InvalidSchemaDependencyException extends ValidationException
      *
      * @param           $providedValue
      */
-    public function __construct($providedValue, string $propertyName, protected \Throwable $dependencyException)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected Throwable $dependencyException
+    ) {
         parent::__construct(
             "Invalid schema which is dependant on $propertyName:\n  - " .
                 preg_replace(
@@ -29,7 +33,8 @@ class InvalidSchemaDependencyException extends ValidationException
                     (string) preg_replace("/\n\s/m", "\n     ", $this->dependencyException->getMessage())
                 ),
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

@@ -19,13 +19,18 @@ class AdditionalPropertiesException extends ValidationException
      * @param $providedValue
      * @param string[] $additionalProperties
      */
-    public function __construct($providedValue, string $propertyName, protected array $additionalProperties)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected array $additionalProperties
+    ) {
         parent::__construct(
             "Provided JSON for $propertyName contains not allowed additional properties [" .
                 join(", ", $this->additionalProperties) . ']',
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 

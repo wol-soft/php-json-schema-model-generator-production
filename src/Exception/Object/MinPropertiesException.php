@@ -11,6 +11,7 @@ class MinPropertiesException extends ValidationException
     public function __construct(
         $providedValue,
         string $propertyName,
+        string $jsonPointer,
         protected int $minProperties,
         protected int $count,
     ) {
@@ -22,7 +23,8 @@ class MinPropertiesException extends ValidationException
                 $this->count,
             ),
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer
         );
     }
 
