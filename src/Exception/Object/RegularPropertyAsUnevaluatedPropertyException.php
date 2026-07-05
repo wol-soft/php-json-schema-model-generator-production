@@ -14,12 +14,17 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class RegularPropertyAsUnevaluatedPropertyException extends ValidationException
 {
-    public function __construct($providedValue, string $propertyName, private readonly string $class)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        private readonly string $class,
+    ) {
         parent::__construct(
             "Couldn't add regular property $propertyName as unevaluated property to object {$this->class}",
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer,
         );
     }
 

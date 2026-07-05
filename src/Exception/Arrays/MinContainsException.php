@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Arrays;
 
@@ -11,18 +11,21 @@ class MinContainsException extends ValidationException
     public function __construct(
         array $providedValue,
         string $propertyName,
+        string $jsonPointer,
         protected int $minContains,
         protected int $matches,
     ) {
         parent::__construct(
             sprintf(
-                'Array %s must not contain less than %d items matching the contains constraint, %s matching items provided',
+                'Array %s must not contain less than %d items matching the contains constraint,'
+                    . ' %s matching items provided',
                 $propertyName,
                 $this->minContains,
                 $this->matches,
             ),
             $propertyName,
-            $providedValue
+            $providedValue,
+            $jsonPointer,
         );
     }
 

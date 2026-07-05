@@ -18,6 +18,7 @@ class UnevaluatedItemsException extends ValidationException
     public function __construct(
         mixed $providedValue,
         string $propertyName,
+        string $jsonPointer,
         protected array $unevaluatedItems,
     ) {
         $formattedIndices = implode(
@@ -33,6 +34,7 @@ class UnevaluatedItemsException extends ValidationException
                 . "[$formattedIndices]",
             $propertyName,
             $providedValue,
+            $jsonPointer,
         );
     }
 
