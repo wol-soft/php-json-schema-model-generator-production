@@ -34,9 +34,11 @@ class UnevaluatedPropertiesAccessor
         return $this->unevaluatedProperties;
     }
 
-    public function set(string $key, mixed $value): void
+    public function set(string $key, mixed $value): static
     {
         ($this->setter)($key, $value);
+
+        return $this;
     }
 
     public function remove(string $key): bool
