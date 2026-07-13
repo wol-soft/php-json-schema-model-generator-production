@@ -155,9 +155,9 @@ trait CompositionEvaluationTrait
      * unevaluatedItems validator.
      *
      * Generation-time guarantees from UnevaluatedItemsValidatorFactory skip emission entirely
-     * for the three array-side dead-code shapes — `items: false`, `items: {schema}`, and
-     * `additionalItems: false` with tuple `items` — so this method never needs to short-circuit
-     * those cases at runtime.
+     * for the array-side dead-code shapes — `items: false`, `items: true`, `items: {schema}`,
+     * and `additionalItems: false` with tuple `items` — so this method never needs to
+     * short-circuit those cases at runtime.
      *
      * `$this->_compositionAnnotated[$slotKey]` carries the union of indices claimed by
      * successful branches of one composition validator. The composition template writes the
@@ -166,14 +166,23 @@ trait CompositionEvaluationTrait
      * (e.g. `tags_0` for the first composition on `tags`); the caller passes the list of slot
      * keys it cares about.
      *
-     * `$this->_evaluatedItemIndices[$propertyName]` carries indices contributed by sibling
-     * array-side validators (items, additionalItems, contains, and an inner unevaluatedItems
-     * validator running within a successful composition branch).
+     * `$this->_evaluatedItemIndices[$propertyName]` carries indices contributed by instance-
+     * dependent sibling array-side validators — a sibling `contains` (matched indices) and an
+     * inner unevaluatedItems validator running within a successful composition branch.
      *
-     * @param array    $value             The raw array value being validated.
-     * @param string   $propertyName      Name of the array property; used to key into
-     *                                    `_evaluatedItemIndices`.
+     * A sibling `items` in tuple form and a non-false sibling `additionalItems` claim fixed
+     * positional ranges independent of the instance, so they are derived here from the value
+     * length via $siblingTupleItemsCount / $siblingCoversTail rather than recorded during
+     * validation.
+     *
+     * @param array    $value               The raw array value being validated.
+     * @param string   $propertyName        Name of the array property; used to key into
+     *                                      `_evaluatedItemIndices`.
      * @param string[] $compositionSlotKeys Slot keys into `_compositionAnnotated` to consult.
+     * @param int      $siblingTupleItemsCount Number of tuple entries in a sibling `items` array;
+     *                                      indices [0, count) are evaluated. 0 when absent.
+     * @param bool     $siblingCoversTail   Whether a non-false sibling `additionalItems` evaluates
+     *                                      every index at or past $siblingTupleItemsCount.
      *
      * @return int[] Zero-based indices of array entries not evaluated by any applicator.
      */
@@ -181,11 +190,23 @@ trait CompositionEvaluationTrait
         array $value,
         string $propertyName,
         array $compositionSlotKeys,
+        int $siblingTupleItemsCount = 0,
+        bool $siblingCoversTail = false,
     ): array {
         $evaluated = ($this->_evaluatedItemIndices ?? [])[$propertyName] ?? [];
 
         foreach ($compositionSlotKeys as $slotKey) {
             $evaluated += $this->_compositionAnnotated[$slotKey] ?? [];
+        }
+
+        $count = count($value);
+
+        if ($siblingTupleItemsCount > 0) {
+            $evaluated += array_fill(0, min($siblingTupleItemsCount, $count), true);
+        }
+
+        if ($siblingCoversTail && $count > $siblingTupleItemsCount) {
+            $evaluated += array_fill($siblingTupleItemsCount, $count - $siblingTupleItemsCount, true);
         }
 
         $unevaluated = [];
