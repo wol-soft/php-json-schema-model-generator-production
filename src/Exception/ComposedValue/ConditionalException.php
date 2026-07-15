@@ -64,11 +64,15 @@ class ConditionalException extends ValidationException
         return $exception instanceof ErrorRegistryExceptionInterface
             ? implode(
                 "\n    * ",
-                array_map(
-                    fn(ValidationException $exception): string => $exception->getMessage(),
-                    $exception->getErrors(),
+                str_replace(
+                    "\n",
+                    "\n    ",
+                    array_map(
+                        fn(ValidationException $exception): string => $exception->getMessage(),
+                        $exception->getErrors(),
+                    ),
                 ),
             )
-            : "\n    * " . $exception->getMessage();
+            : "\n    * " . str_replace("\n", "\n    ", $exception->getMessage());
     }
 }
