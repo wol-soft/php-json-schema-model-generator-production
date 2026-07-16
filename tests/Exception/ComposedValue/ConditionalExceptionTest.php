@@ -56,9 +56,9 @@ class ConditionalExceptionTest extends TestCase
           - Conditional branch failed:Invalid value for kind declined by composition constraint.
               Requires to match one composition element but matched 0 elements.
               - Composition element #1: Failed
-                * Invalid value for kind declined by const constraint
+                * Value for 'kind' must be "a", got "zzz"
               - Composition element #2: Failed
-                * Invalid value for kind declined by const constraint
+                * Value for 'kind' must be "b", got "zzz"
         MESSAGE;
 
         $this->assertSame($expectedMessage, $conditional->getMessage());

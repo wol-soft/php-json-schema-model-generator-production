@@ -80,15 +80,15 @@ class InvalidComposedValueExceptionTest extends TestCase
         Invalid value for target declined by composition constraint.
           Requires to match one composition element but matched 0 elements.
           - Composition element #1: Failed
-            * Invalid value for kind declined by const constraint
+            * Value for 'kind' must be "x", got "zzz"
             * Invalid value for reachUnit declined by composition constraint.
               Requires to match one composition element but matched 0 elements.
               - Composition element #1: Failed
-                * Invalid value for reachUnit declined by const constraint
+                * Value for 'reachUnit' must be "a", got "zzz"
               - Composition element #2: Failed
-                * Invalid value for reachUnit declined by const constraint
+                * Value for 'reachUnit' must be "b", got "zzz"
           - Composition element #2: Failed
-            * Invalid value for kind declined by const constraint
+            * Value for 'kind' must be "y", got "zzz"
         MESSAGE;
 
         $this->assertSame($expectedMessage, $targetException->getMessage());

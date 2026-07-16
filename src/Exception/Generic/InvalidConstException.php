@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PHPModelGenerator\Exception\Generic;
 
 use PHPModelGenerator\Exception\ValidationException;
+use PHPModelGenerator\Exception\ValueFormatter;
 
 /**
  * Class InvalidConstException
@@ -22,7 +23,12 @@ class InvalidConstException extends ValidationException
     public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $expectedValue)
     {
         parent::__construct(
-            "Invalid value for $propertyName declined by const constraint",
+            sprintf(
+                "Value for '%s' must be %s, got %s",
+                $propertyName,
+                ValueFormatter::format($this->expectedValue),
+                ValueFormatter::format($providedValue),
+            ),
             $propertyName,
             $providedValue,
             $jsonPointer
