@@ -20,6 +20,6 @@ class RequiredValueException extends ValidationException
      */
     public function __construct($providedValue, string $propertyName, string $jsonPointer)
     {
-        parent::__construct("Missing required value for $propertyName", $propertyName, $providedValue, $jsonPointer);
+        parent::__construct("Missing required value for '$propertyName'", $propertyName, $providedValue, $jsonPointer);
     }
 }

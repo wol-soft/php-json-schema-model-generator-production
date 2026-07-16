@@ -25,7 +25,7 @@ class PatternException extends ValidationException
         protected string $expectedPattern
     ) {
         parent::__construct(
-            "Value for $propertyName doesn't match pattern {$this->expectedPattern}",
+            "Value for '$propertyName' does not match pattern '{$this->expectedPattern}'",
             $propertyName,
             $providedValue,
             $jsonPointer

@@ -26,8 +26,8 @@ class AdditionalPropertiesException extends ValidationException
         protected array $additionalProperties
     ) {
         parent::__construct(
-            "Provided JSON for $propertyName contains not allowed additional properties [" .
-                join(", ", $this->additionalProperties) . ']',
+            "Provided JSON for '$propertyName' contains not allowed additional properties [" .
+                join(', ', array_map(fn(string $property): string => "'$property'", $this->additionalProperties)) . ']',
             $propertyName,
             $providedValue,
             $jsonPointer

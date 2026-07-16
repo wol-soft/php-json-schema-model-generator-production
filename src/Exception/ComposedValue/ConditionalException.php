@@ -66,7 +66,7 @@ class ConditionalException extends ValidationException
 
     private function getErrorMessage(string $propertyName): string
     {
-        $message = "Invalid value for $propertyName declined by conditional composition constraint\n";
+        $message = "Invalid value for '$propertyName' declined by conditional composition constraint\n";
 
         $message .= $this->ifException
             ? "  - Condition: Failed" . $this->getExceptionMessage($this->ifException)

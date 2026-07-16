@@ -26,7 +26,7 @@ class InvalidSchemaDependencyException extends ValidationException
         protected Throwable $dependencyException
     ) {
         parent::__construct(
-            "Invalid schema which is dependant on $propertyName:\n  - " .
+            "Invalid schema which is dependant on '$propertyName':\n  - " .
                 preg_replace(
                     "/\n([^\s])/m",
                     "\n  - $1",

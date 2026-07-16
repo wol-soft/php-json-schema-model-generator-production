@@ -77,12 +77,12 @@ class InvalidComposedValueExceptionTest extends TestCase
         );
 
         $expectedMessage = <<<'MESSAGE'
-        Invalid value for target declined by composition constraint.
-          Requires to match one composition element but matched 0 elements.
+        Invalid value for 'target' declined by composition constraint
+          Requires to match one composition element but matched 0 elements
           - Composition element #1: Failed
             * Value for 'kind' must be "x", got "zzz"
-            * Invalid value for reachUnit declined by composition constraint.
-              Requires to match one composition element but matched 0 elements.
+            * Invalid value for 'reachUnit' declined by composition constraint
+              Requires to match one composition element but matched 0 elements
               - Composition element #1: Failed
                 * Value for 'reachUnit' must be "a", got "zzz"
               - Composition element #2: Failed

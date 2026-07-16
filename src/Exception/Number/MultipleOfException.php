@@ -22,7 +22,7 @@ class MultipleOfException extends ValidationException
     public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $multipleOf)
     {
         parent::__construct(
-            "Value for $propertyName must be a multiple of {$this->multipleOf}",
+            "Value for '$propertyName' must be a multiple of {$this->multipleOf}",
             $propertyName,
             $providedValue,
             $jsonPointer

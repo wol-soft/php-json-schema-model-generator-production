@@ -75,6 +75,6 @@ class InvalidPatternPropertiesException extends ValidationException
             );
         }
 
-        return "Provided JSON for $propertyName contains invalid pattern properties." . $output;
+        return "Provided JSON for '$propertyName' contains invalid pattern properties" . $output;
     }
 }

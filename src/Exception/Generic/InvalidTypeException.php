@@ -23,9 +23,11 @@ class InvalidTypeException extends ValidationException
     {
         parent::__construct(
             sprintf(
-                'Invalid type for %s. Requires %s, got %s',
+                "Invalid type for '%s': requires %s, got '%s'",
                 $propertyName,
-                is_array($this->expectedType) ? '[' . join(', ', $this->expectedType) . ']' : $this->expectedType,
+                is_array($this->expectedType)
+                    ? '[' . join(', ', array_map(fn(string $type): string => "'$type'", $this->expectedType)) . ']'
+                    : "'{$this->expectedType}'",
                 is_object($providedValue) ? $providedValue::class : gettype($providedValue)
             ),
             $propertyName,

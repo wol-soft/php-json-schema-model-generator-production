@@ -51,10 +51,10 @@ class ConditionalExceptionTest extends TestCase
         );
 
         $expectedMessage = <<<'MESSAGE'
-        Invalid value for root declined by conditional composition constraint
+        Invalid value for 'root' declined by conditional composition constraint
           - Condition: Valid
-          - Conditional branch failed:Invalid value for kind declined by composition constraint.
-              Requires to match one composition element but matched 0 elements.
+          - Conditional branch failed:Invalid value for 'kind' declined by composition constraint
+              Requires to match one composition element but matched 0 elements
               - Composition element #1: Failed
                 * Value for 'kind' must be "a", got "zzz"
               - Composition element #2: Failed

@@ -44,7 +44,7 @@ class InvalidTupleException extends ValidationException
 
     protected function getErrorMessage(string $propertyName): string
     {
-        $output = "Invalid tuple item in array $propertyName:";
+        $output = "Invalid tuple item in array '$propertyName':";
         foreach ($this->invalidTuples as $tupleIndex => $exceptions) {
             $output .= "\n  - invalid tuple #$tupleIndex\n    * " .
                 implode(

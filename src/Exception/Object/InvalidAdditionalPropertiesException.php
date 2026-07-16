@@ -13,7 +13,7 @@ use PHPModelGenerator\Exception\ValidationException;
  */
 class InvalidAdditionalPropertiesException extends ValidationException
 {
-    protected const MAIN_MESSAGE = 'Provided JSON for %s contains invalid additional properties.';
+    protected const MAIN_MESSAGE = "Provided JSON for '%s' contains invalid additional properties";
     protected const TYPE = 'additional property';
 
     /**

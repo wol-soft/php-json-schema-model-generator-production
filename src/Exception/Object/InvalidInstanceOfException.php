@@ -23,7 +23,7 @@ class InvalidInstanceOfException extends ValidationException
     {
         parent::__construct(
             sprintf(
-                'Invalid class for %s. Requires %s, got %s',
+                "Invalid class for '%s': requires '%s', got '%s'",
                 $propertyName,
                 $this->expectedClass,
                 $providedValue::class

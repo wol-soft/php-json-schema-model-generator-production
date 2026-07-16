@@ -25,8 +25,8 @@ class InvalidPropertyDependencyException extends ValidationException
         protected array $missingAttributes
     ) {
         parent::__construct(
-            "Missing required attributes which are dependants of $propertyName:\n  - " .
-                join("\n  - ", $this->missingAttributes),
+            "Missing required attributes which are dependants of '$propertyName':\n  - " .
+                join("\n  - ", array_map(fn(string $attribute): string => "'$attribute'", $this->missingAttributes)),
             $propertyName,
             $providedValue,
             $jsonPointer

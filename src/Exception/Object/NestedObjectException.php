@@ -35,7 +35,7 @@ class NestedObjectException extends ValidationException
         }
 
         parent::__construct(
-            "Invalid nested object for property $propertyName:\n  - " .
+            "Invalid nested object for property '$propertyName':\n  - " .
                 preg_replace(
                     "/\n([^\s])/m",
                     "\n  - $1",

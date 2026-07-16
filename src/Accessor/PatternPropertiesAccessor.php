@@ -15,7 +15,9 @@ use PHPModelGenerator\Exception\Object\UnknownPatternPropertyException;
  */
 class PatternPropertiesAccessor
 {
-    public function __construct(protected array &$patternProperties) {}
+    public function __construct(protected array &$patternProperties)
+    {
+    }
 
     /**
      * @throws UnknownPatternPropertyException
@@ -25,7 +27,7 @@ class PatternPropertiesAccessor
         $hash = md5($key);
 
         if (!isset($this->patternProperties[$hash])) {
-            throw new UnknownPatternPropertyException("Tried to access unknown pattern properties with key $key");
+            throw new UnknownPatternPropertyException("Tried to access an unknown pattern property with key '$key'");
         }
 
         return $this->patternProperties[$hash];
