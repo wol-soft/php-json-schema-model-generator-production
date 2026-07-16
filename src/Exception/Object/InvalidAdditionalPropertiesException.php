@@ -24,7 +24,19 @@ class InvalidAdditionalPropertiesException extends ValidationException
      */
     public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $nestedExceptions)
     {
+        foreach ($this->nestedExceptions as $nestedPropertyName => $exceptions) {
+            foreach ($exceptions as $exception) {
+                $exception->setInstancePointerParent($this, $nestedPropertyName);
+            }
+        }
+
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
+
+        // This exception validates the enclosing object's own additionalProperties/items
+        // constraint. $propertyName is the generated class name (a base validator has no access
+        // to the property name its parent used to reach this object) — a message-text label only,
+        // never a real instance-path segment.
+        $this->suppressOwnInstancePointerSegment();
     }
 
     /**

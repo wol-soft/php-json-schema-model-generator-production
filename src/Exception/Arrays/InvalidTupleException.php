@@ -25,6 +25,12 @@ class InvalidTupleException extends ValidationException
         string $jsonPointer,
         protected array $invalidTuples
     ) {
+        foreach ($this->invalidTuples as $tupleIndex => $exceptions) {
+            foreach ($exceptions as $exception) {
+                $exception->setInstancePointerParent($this, $tupleIndex);
+            }
+        }
+
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
     }
 

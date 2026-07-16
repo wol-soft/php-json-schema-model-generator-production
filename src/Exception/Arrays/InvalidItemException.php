@@ -25,6 +25,12 @@ class InvalidItemException extends ValidationException
         string $jsonPointer,
         protected array $invalidItems
     ) {
+        foreach ($this->invalidItems as $itemIndex => $exceptions) {
+            foreach ($exceptions as $exception) {
+                $exception->setInstancePointerParent($this, $itemIndex);
+            }
+        }
+
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
     }
 

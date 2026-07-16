@@ -28,6 +28,15 @@ abstract class InvalidComposedValueException extends ValidationException
         protected int $succeededCompositionElements,
         protected array $compositionErrorCollection
     ) {
+        // A composition branch validates the same value at the same position as the composition
+        // itself — it consumes no path segment of its own, so branch errors only need the parent
+        // link (not a segment replacement) to inherit wherever this composition ends up.
+        foreach ($this->compositionErrorCollection as $branch) {
+            foreach ($branch->getErrors() as $error) {
+                $error->setInstancePointerParent($this);
+            }
+        }
+
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
     }
 
