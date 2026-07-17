@@ -44,7 +44,7 @@ class InvalidItemException extends ValidationException
 
     protected function getErrorMessage(string $propertyName): string
     {
-        $output = "Invalid items in array $propertyName:";
+        $output = "Invalid items in array '$propertyName':";
         foreach ($this->invalidItems as $itemIndex => $exceptions) {
             $output .= "\n  - invalid item #$itemIndex\n    * " .
                 implode(
