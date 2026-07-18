@@ -59,7 +59,10 @@ abstract class InvalidComposedValueException extends ValidationException
         $compositionIndex = 0;
 
         return "Invalid value for '$propertyName' declined by composition constraint\n  " .
-            sprintf(static::COMPOSED_ERROR_MESSAGE, $this->succeededCompositionElements) .
+            sprintf(
+                static::COMPOSED_ERROR_MESSAGE,
+                MessageFormatter::pluralize($this->succeededCompositionElements, 'element'),
+            ) .
             array_reduce(
                 $this->compositionErrorCollection,
                 function (string $carry, ErrorRegistryExceptionInterface $exception) use (&$compositionIndex): string {

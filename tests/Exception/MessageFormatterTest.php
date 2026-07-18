@@ -32,6 +32,23 @@ class MessageFormatterTest extends TestCase
         fclose($resource);
     }
 
+    public function testPluralizeUsesTheSingularFormForACountOfOne(): void
+    {
+        $this->assertSame('1 element', MessageFormatter::pluralize(1, 'element'));
+    }
+
+    public function testPluralizeUsesTheDefaultPluralFormForAnyOtherCount(): void
+    {
+        $this->assertSame('0 elements', MessageFormatter::pluralize(0, 'element'));
+        $this->assertSame('2 elements', MessageFormatter::pluralize(2, 'element'));
+    }
+
+    public function testPluralizeAcceptsAnIrregularPluralForm(): void
+    {
+        $this->assertSame('1 entry', MessageFormatter::pluralize(1, 'entry', 'entries'));
+        $this->assertSame('3 entries', MessageFormatter::pluralize(3, 'entry', 'entries'));
+    }
+
     public function testQuotedListJoinsWithCommaByDefault(): void
     {
         $this->assertSame("'a', 'b', 'c'", MessageFormatter::quotedList(['a', 'b', 'c']));

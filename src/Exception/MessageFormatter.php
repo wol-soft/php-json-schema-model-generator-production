@@ -25,6 +25,14 @@ class MessageFormatter
     }
 
     /**
+     * Render a count together with its correctly pluralized unit, e.g. "1 element" / "2 elements".
+     */
+    public static function pluralize(int $count, string $singular, ?string $plural = null): string
+    {
+        return "$count " . ($count === 1 ? $singular : ($plural ?? "{$singular}s"));
+    }
+
+    /**
      * Quote each item and join them with $glue. Used both for inline comma-separated lists
      * wrapped in brackets by the caller (expected types, denied additional properties) and for
      * bullet lists (missing dependency attributes) by passing a "\n  - " glue.
