@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Object;
 
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
@@ -64,14 +65,7 @@ class InvalidPatternPropertiesException extends ValidationException
                 "\n  - invalid property '%s' matching pattern '%s'\n    * %s",
                 $nestedPropertyName,
                 $this->pattern,
-                implode(
-                    "\n    * ",
-                    str_replace(
-                        "\n",
-                        "\n    ",
-                        array_map(fn(ValidationException $exception): string => $exception->getMessage(), $exceptions)
-                    )
-                )
+                MessageFormatter::bulletList($exceptions),
             );
         }
 

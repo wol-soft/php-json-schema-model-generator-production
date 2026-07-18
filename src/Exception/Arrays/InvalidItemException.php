@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Arrays;
 
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
@@ -46,15 +47,7 @@ class InvalidItemException extends ValidationException
     {
         $output = "Invalid items in array '$propertyName':";
         foreach ($this->invalidItems as $itemIndex => $exceptions) {
-            $output .= "\n  - invalid item #$itemIndex\n    * " .
-                implode(
-                    "\n    * ",
-                    str_replace(
-                        "\n",
-                        "\n    ",
-                        array_map(fn(ValidationException $exception): string => $exception->getMessage(), $exceptions)
-                    )
-                );
+            $output .= "\n  - invalid item #$itemIndex\n    * " . MessageFormatter::bulletList($exceptions);
         }
 
         return $output;

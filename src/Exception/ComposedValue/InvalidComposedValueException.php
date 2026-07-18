@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PHPModelGenerator\Exception\ComposedValue;
 
 use PHPModelGenerator\Exception\ErrorRegistryExceptionInterface;
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
@@ -64,18 +65,7 @@ abstract class InvalidComposedValueException extends ValidationException
                 function (string $carry, ErrorRegistryExceptionInterface $exception) use (&$compositionIndex): string {
                     return "$carry\n  - Composition element #" . ++$compositionIndex . (
                         $exception->getErrors()
-                            ? ": Failed\n    * " .
-                                implode(
-                                    "\n    * ",
-                                    str_replace(
-                                        "\n",
-                                        "\n    ",
-                                        array_map(
-                                            fn(ValidationException $exception): string => $exception->getMessage(),
-                                            $exception->getErrors(),
-                                        )
-                                    )
-                                )
+                            ? ": Failed\n    * " . MessageFormatter::bulletList($exception->getErrors())
                             : ': Valid'
                         );
                 },

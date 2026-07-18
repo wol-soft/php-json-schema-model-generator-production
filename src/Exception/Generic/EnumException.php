@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Generic;
 
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
-use PHPModelGenerator\Exception\ValueFormatter;
 
 /**
  * Class EnumException
@@ -35,7 +35,7 @@ class EnumException extends ValidationException
                 "Value for '%s' must be one of [%s], got %s",
                 $propertyName,
                 self::formatAllowedValues($this->allowedValues),
-                ValueFormatter::format($providedValue),
+                MessageFormatter::format($providedValue),
             ),
             $propertyName,
             $providedValue,
@@ -51,13 +51,13 @@ class EnumException extends ValidationException
     private static function formatAllowedValues(array $allowedValues): string
     {
         if (count($allowedValues) <= self::MAX_DISPLAYED_VALUES) {
-            return implode(',', array_map(ValueFormatter::format(...), $allowedValues));
+            return implode(',', array_map(MessageFormatter::format(...), $allowedValues));
         }
 
         $shown = array_slice($allowedValues, 0, self::TRUNCATED_DISPLAY_COUNT);
         $remaining = count($allowedValues) - self::TRUNCATED_DISPLAY_COUNT;
 
-        return implode(',', array_map(ValueFormatter::format(...), $shown))
+        return implode(',', array_map(MessageFormatter::format(...), $shown))
             . ", ... (and $remaining more)";
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Dependency;
 
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
@@ -26,7 +27,7 @@ class InvalidPropertyDependencyException extends ValidationException
     ) {
         parent::__construct(
             "Missing required attributes which are dependants of '$propertyName':\n  - " .
-                join("\n  - ", array_map(fn(string $attribute): string => "'$attribute'", $this->missingAttributes)),
+                MessageFormatter::quotedList($this->missingAttributes, "\n  - "),
             $propertyName,
             $providedValue,
             $jsonPointer

@@ -6,6 +6,7 @@ namespace PHPModelGenerator\Exception\ComposedValue;
 
 use Exception;
 use PHPModelGenerator\Exception\ErrorRegistryExceptionInterface;
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
@@ -79,17 +80,7 @@ class ConditionalException extends ValidationException
     private function getExceptionMessage(Exception $exception): string
     {
         return $exception instanceof ErrorRegistryExceptionInterface
-            ? implode(
-                "\n    * ",
-                str_replace(
-                    "\n",
-                    "\n    ",
-                    array_map(
-                        fn(ValidationException $exception): string => $exception->getMessage(),
-                        $exception->getErrors(),
-                    ),
-                ),
-            )
+            ? MessageFormatter::bulletList($exception->getErrors())
             : "\n    * " . str_replace("\n", "\n    ", $exception->getMessage());
     }
 }

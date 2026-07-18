@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Object;
 
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
@@ -57,14 +58,7 @@ class InvalidAdditionalPropertiesException extends ValidationException
                 "\n  - invalid %s '%s'\n    * %s",
                 static::TYPE,
                 $nestedPropertyName,
-                implode(
-                    "\n    * ",
-                    str_replace(
-                        "\n",
-                        "\n    ",
-                        array_map(fn(ValidationException $exception): string => $exception->getMessage(), $exceptions)
-                    )
-                )
+                MessageFormatter::bulletList($exceptions),
             );
         }
 

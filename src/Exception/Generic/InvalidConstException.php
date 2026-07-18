@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Generic;
 
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
-use PHPModelGenerator\Exception\ValueFormatter;
 
 /**
  * Class InvalidConstException
@@ -26,8 +26,8 @@ class InvalidConstException extends ValidationException
             sprintf(
                 "Value for '%s' must be %s, got %s",
                 $propertyName,
-                ValueFormatter::format($this->expectedValue),
-                ValueFormatter::format($providedValue),
+                MessageFormatter::format($this->expectedValue),
+                MessageFormatter::format($providedValue),
             ),
             $propertyName,
             $providedValue,
