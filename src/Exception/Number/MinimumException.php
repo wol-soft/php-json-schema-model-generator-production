@@ -22,7 +22,7 @@ class MinimumException extends ValidationException
     public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $minimum)
     {
         parent::__construct(
-            "Value for $propertyName must not be smaller than {$this->minimum}",
+            "Value for '$propertyName' must not be smaller than {$this->minimum}",
             $propertyName,
             $providedValue,
             $jsonPointer

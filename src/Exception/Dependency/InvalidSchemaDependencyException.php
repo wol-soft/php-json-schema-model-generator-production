@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Dependency;
 
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 use Throwable;
 
@@ -26,12 +27,8 @@ class InvalidSchemaDependencyException extends ValidationException
         protected Throwable $dependencyException
     ) {
         parent::__construct(
-            "Invalid schema which is dependant on $propertyName:\n  - " .
-                preg_replace(
-                    "/\n([^\s])/m",
-                    "\n  - $1",
-                    (string) preg_replace("/\n\s/m", "\n     ", $this->dependencyException->getMessage())
-                ),
+            "Invalid schema which is dependant on '$propertyName':\n  - " .
+                MessageFormatter::flattenNestedMessage($this->dependencyException->getMessage()),
             $propertyName,
             $providedValue,
             $jsonPointer

@@ -6,6 +6,7 @@ namespace PHPModelGenerator\Exception\ComposedValue;
 
 use Exception;
 use PHPModelGenerator\Exception\ErrorRegistryExceptionInterface;
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
@@ -28,8 +29,25 @@ class ConditionalException extends ValidationException
         private readonly ?Exception $thenException,
         private readonly ?Exception $elseException
     ) {
+        // A conditional branch validates the same value at the same position as the conditional
+        // itself — it consumes no path segment of its own, so branch errors only need the parent
+        // link (not a segment replacement) to inherit wherever this conditional ends up.
+        foreach ([$this->ifException, $this->thenException, $this->elseException] as $branchException) {
+            $this->linkInstancePointerParent($branchException);
+        }
 
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
+    }
+
+    private function linkInstancePointerParent(?Exception $exception): void
+    {
+        if ($exception instanceof ErrorRegistryExceptionInterface) {
+            foreach ($exception->getErrors() as $error) {
+                $error->setInstancePointerParent($this);
+            }
+        } elseif ($exception instanceof ValidationException) {
+            $exception->setInstancePointerParent($this);
+        }
     }
 
     public function getIfException(): ?Exception
@@ -49,7 +67,7 @@ class ConditionalException extends ValidationException
 
     private function getErrorMessage(string $propertyName): string
     {
-        $message = "Invalid value for $propertyName declined by conditional composition constraint\n";
+        $message = "Invalid value for '$propertyName' declined by conditional composition constraint\n";
 
         $message .= $this->ifException
             ? "  - Condition: Failed" . $this->getExceptionMessage($this->ifException)
@@ -62,13 +80,7 @@ class ConditionalException extends ValidationException
     private function getExceptionMessage(Exception $exception): string
     {
         return $exception instanceof ErrorRegistryExceptionInterface
-            ? implode(
-                "\n    * ",
-                array_map(
-                    fn(ValidationException $exception): string => $exception->getMessage(),
-                    $exception->getErrors(),
-                ),
-            )
-            : "\n    * " . $exception->getMessage();
+            ? MessageFormatter::bulletList($exception->getErrors())
+            : "\n    * " . str_replace("\n", "\n    ", $exception->getMessage());
     }
 }

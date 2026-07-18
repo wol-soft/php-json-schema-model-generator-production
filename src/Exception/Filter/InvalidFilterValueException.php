@@ -28,7 +28,7 @@ class InvalidFilterValueException extends ValidationException
     ) {
         parent::__construct(
             sprintf(
-                'Invalid value for property %s denied by filter %s: %s',
+                "Invalid value for property '%s' denied by filter '%s': %s",
                 $propertyName,
                 $this->filterToken,
                 $filterException->getMessage()

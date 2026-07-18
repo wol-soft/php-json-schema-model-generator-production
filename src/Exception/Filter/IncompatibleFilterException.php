@@ -26,7 +26,7 @@ class IncompatibleFilterException extends ValidationException
     ) {
         parent::__construct(
             sprintf(
-                'Filter %s is not compatible with property type %s for property %s',
+                "Filter '%s' is not compatible with property type '%s' for property '%s'",
                 $this->filterToken,
                 gettype($providedValue),
                 $propertyName

@@ -21,7 +21,7 @@ class MaxPropertiesException extends ValidationException
     public function __construct($providedValue, string $propertyName, string $jsonPointer, protected int $maxProperties)
     {
         parent::__construct(
-            "Provided object for $propertyName must not contain more than {$this->maxProperties} properties",
+            "Provided object for '$propertyName' must not contain more than {$this->maxProperties} properties",
             $propertyName,
             $providedValue,
             $jsonPointer

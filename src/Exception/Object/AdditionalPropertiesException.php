@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Object;
 
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
@@ -26,8 +27,8 @@ class AdditionalPropertiesException extends ValidationException
         protected array $additionalProperties
     ) {
         parent::__construct(
-            "Provided JSON for $propertyName contains not allowed additional properties [" .
-                join(", ", $this->additionalProperties) . ']',
+            "Provided JSON for '$propertyName' contains not allowed additional properties [" .
+                MessageFormatter::quotedList($this->additionalProperties) . ']',
             $propertyName,
             $providedValue,
             $jsonPointer

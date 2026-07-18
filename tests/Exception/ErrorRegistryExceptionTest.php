@@ -29,8 +29,8 @@ class ErrorRegistryExceptionTest extends TestCase
     public function testErrorRegistryExceptionCollectsMessages(): void
     {
         $messages = [
-            'test1' => 'Value for test1 must not be larger than 2',
-            'test2' => 'Value for test2 must not be larger than 2',
+            'test1' => "Value for 'test1' must not be larger than 2",
+            'test2' => "Value for 'test2' must not be larger than 2",
         ];
 
         $this->expectException(ErrorRegistryException::class);
@@ -53,7 +53,7 @@ class ErrorRegistryExceptionTest extends TestCase
                             'propertyName'  => 'test1',
                             'providedValue' => 10,
                             'jsonPointer'   => '/properties/test1',
-                            'message'       => 'Value for test1 must not be larger than 2',
+                            'message'       => "Value for 'test1' must not be larger than 2",
                         ],
                     1 =>
                         [
@@ -61,10 +61,10 @@ class ErrorRegistryExceptionTest extends TestCase
                             'propertyName'  => 'test2',
                             'providedValue' => 10,
                             'jsonPointer'   => '/properties/test2',
-                            'message'       => 'Value for test2 must not be larger than 2',
+                            'message'       => "Value for 'test2' must not be larger than 2",
                         ],
                 ],
-            'message' => "Value for test1 must not be larger than 2\nValue for test2 must not be larger than 2",
+            'message' => "Value for 'test1' must not be larger than 2\nValue for 'test2' must not be larger than 2",
         ];
 
         $this->assertSame($expectedOutput, $errorRegistry->toArray(['code']));

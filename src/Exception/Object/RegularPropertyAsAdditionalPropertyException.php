@@ -25,7 +25,11 @@ class RegularPropertyAsAdditionalPropertyException extends ValidationException
         private readonly string $class
     ) {
         parent::__construct(
-            sprintf("Couldn't add regular property %s as additional property to object %s", $propertyName, $this->class),
+            sprintf(
+                "Could not add regular property '%s' as an additional property of object '%s'",
+                $propertyName,
+                $this->class
+            ),
             $propertyName,
             $providedValue,
             $jsonPointer

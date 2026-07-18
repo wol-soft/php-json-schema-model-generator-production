@@ -18,12 +18,12 @@ class ContentException extends ValidationException
         ?Throwable $previous = null,
     ) {
         $description = implode(', ', array_filter([
-            $this->expectedMediaType ? "mediaType {$this->expectedMediaType}" : null,
-            $this->expectedEncoding ? "encoding {$this->expectedEncoding}" : null,
+            $this->expectedMediaType ? "mediaType '{$this->expectedMediaType}'" : null,
+            $this->expectedEncoding ? "encoding '{$this->expectedEncoding}'" : null,
         ]));
 
         parent::__construct(
-            "Value for $propertyName does not match the expected content ($description)",
+            "Value for '$propertyName' does not match the expected content ($description)",
             $propertyName,
             $providedValue,
             $jsonPointer,

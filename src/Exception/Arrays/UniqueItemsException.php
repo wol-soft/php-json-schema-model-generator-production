@@ -21,7 +21,7 @@ class UniqueItemsException extends ValidationException
     public function __construct($providedValue, string $propertyName, string $jsonPointer)
     {
         parent::__construct(
-            "Items of array $propertyName are not unique",
+            "Items of array '$propertyName' are not unique",
             $propertyName,
             $providedValue,
             $jsonPointer

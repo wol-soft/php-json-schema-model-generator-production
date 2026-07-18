@@ -22,7 +22,7 @@ class ExclusiveMinimumException extends ValidationException
     public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $exclusiveMinimum)
     {
         parent::__construct(
-            "Value for $propertyName must be larger than {$this->exclusiveMinimum}",
+            "Value for '$propertyName' must be larger than {$this->exclusiveMinimum}",
             $propertyName,
             $providedValue,
             $jsonPointer
