@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Arrays;
 
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
@@ -25,6 +26,12 @@ class InvalidTupleException extends ValidationException
         string $jsonPointer,
         protected array $invalidTuples
     ) {
+        foreach ($this->invalidTuples as $tupleIndex => $exceptions) {
+            foreach ($exceptions as $exception) {
+                $exception->setInstancePointerParent($this, $tupleIndex);
+            }
+        }
+
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
     }
 
@@ -38,17 +45,9 @@ class InvalidTupleException extends ValidationException
 
     protected function getErrorMessage(string $propertyName): string
     {
-        $output = "Invalid tuple item in array $propertyName:";
+        $output = "Invalid tuple item in array '$propertyName':";
         foreach ($this->invalidTuples as $tupleIndex => $exceptions) {
-            $output .= "\n  - invalid tuple #$tupleIndex\n    * " .
-                implode(
-                    "\n    * ",
-                    str_replace(
-                        "\n",
-                        "\n    ",
-                        array_map(fn(ValidationException $exception): string => $exception->getMessage(), $exceptions)
-                    )
-                );
+            $output .= "\n  - invalid tuple #$tupleIndex\n    * " . MessageFormatter::bulletList($exceptions);
         }
 
         return $output;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Object;
 
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
@@ -26,7 +27,19 @@ class InvalidPatternPropertiesException extends ValidationException
         protected string $pattern,
         protected $nestedExceptions
     ) {
+        foreach ($this->nestedExceptions as $nestedPropertyName => $exceptions) {
+            foreach ($exceptions as $exception) {
+                $exception->setInstancePointerParent($this, $nestedPropertyName);
+            }
+        }
+
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
+
+        // This exception validates the enclosing object's own patternProperties constraint.
+        // $propertyName is the generated class name (a base validator has no access to the
+        // property name its parent used to reach this object) — a message-text label only, never
+        // a real instance-path segment.
+        $this->suppressOwnInstancePointerSegment();
     }
 
     /**
@@ -52,17 +65,10 @@ class InvalidPatternPropertiesException extends ValidationException
                 "\n  - invalid property '%s' matching pattern '%s'\n    * %s",
                 $nestedPropertyName,
                 $this->pattern,
-                implode(
-                    "\n    * ",
-                    str_replace(
-                        "\n",
-                        "\n    ",
-                        array_map(fn(ValidationException $exception): string => $exception->getMessage(), $exceptions)
-                    )
-                )
+                MessageFormatter::bulletList($exceptions),
             );
         }
 
-        return "Provided JSON for $propertyName contains invalid pattern properties." . $output;
+        return "Provided JSON for '$propertyName' contains invalid pattern properties" . $output;
     }
 }

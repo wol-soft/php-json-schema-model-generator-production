@@ -20,6 +20,6 @@ class DeniedPropertyException extends ValidationException
      */
     public function __construct($providedValue, string $propertyName, string $jsonPointer)
     {
-        parent::__construct("Value for $propertyName is not allowed", $propertyName, $providedValue, $jsonPointer);
+        parent::__construct("Value for '$propertyName' is not allowed", $propertyName, $providedValue, $jsonPointer);
     }
 }

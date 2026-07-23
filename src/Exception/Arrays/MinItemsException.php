@@ -16,7 +16,7 @@ class MinItemsException extends ValidationException
         protected int $count,
     ) {
         parent::__construct(
-            "Array $propertyName must not contain less than $this->minItems items, $this->count items provided",
+            "Array '$propertyName' must not contain less than {$this->minItems} items",
             $propertyName,
             $providedValue,
             $jsonPointer

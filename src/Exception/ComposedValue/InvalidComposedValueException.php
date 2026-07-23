@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PHPModelGenerator\Exception\ComposedValue;
 
 use PHPModelGenerator\Exception\ErrorRegistryExceptionInterface;
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
@@ -28,6 +29,15 @@ abstract class InvalidComposedValueException extends ValidationException
         protected int $succeededCompositionElements,
         protected array $compositionErrorCollection
     ) {
+        // A composition branch validates the same value at the same position as the composition
+        // itself — it consumes no path segment of its own, so branch errors only need the parent
+        // link (not a segment replacement) to inherit wherever this composition ends up.
+        foreach ($this->compositionErrorCollection as $branch) {
+            foreach ($branch->getErrors() as $error) {
+                $error->setInstancePointerParent($this);
+            }
+        }
+
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
     }
 
@@ -48,25 +58,17 @@ abstract class InvalidComposedValueException extends ValidationException
     {
         $compositionIndex = 0;
 
-        return "Invalid value for $propertyName declined by composition constraint.\n  " .
-            sprintf(static::COMPOSED_ERROR_MESSAGE, $this->succeededCompositionElements) .
+        return "Invalid value for '$propertyName' declined by composition constraint\n  " .
+            sprintf(
+                static::COMPOSED_ERROR_MESSAGE,
+                MessageFormatter::pluralize($this->succeededCompositionElements, 'element'),
+            ) .
             array_reduce(
                 $this->compositionErrorCollection,
                 function (string $carry, ErrorRegistryExceptionInterface $exception) use (&$compositionIndex): string {
                     return "$carry\n  - Composition element #" . ++$compositionIndex . (
                         $exception->getErrors()
-                            ? ": Failed\n    * " .
-                                implode(
-                                    "\n    * ",
-                                    str_replace(
-                                        "\n",
-                                        "\n    ",
-                                        array_map(
-                                            fn(ValidationException $exception): string => $exception->getMessage(),
-                                            $exception->getErrors(),
-                                        ),
-                                    ),
-                                )
+                            ? ": Failed\n    * " . MessageFormatter::bulletList($exception->getErrors())
                             : ': Valid'
                         );
                 },

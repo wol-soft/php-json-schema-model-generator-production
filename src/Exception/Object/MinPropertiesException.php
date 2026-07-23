@@ -16,12 +16,7 @@ class MinPropertiesException extends ValidationException
         protected int $count,
     ) {
         parent::__construct(
-            sprintf(
-                'Provided object for %s must not contain less than %d properties, %d properties provided',
-                $propertyName,
-                $this->minProperties,
-                $this->count,
-            ),
+            "Provided object for '$propertyName' must not contain less than {$this->minProperties} properties",
             $propertyName,
             $providedValue,
             $jsonPointer

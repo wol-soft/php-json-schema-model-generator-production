@@ -22,7 +22,7 @@ class MaximumException extends ValidationException
     public function __construct($providedValue, string $propertyName, string $jsonPointer, protected $maximum)
     {
         parent::__construct(
-            "Value for $propertyName must not be larger than {$this->maximum}",
+            "Value for '$propertyName' must not be larger than {$this->maximum}",
             $propertyName,
             $providedValue,
             $jsonPointer

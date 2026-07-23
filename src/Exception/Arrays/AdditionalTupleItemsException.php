@@ -27,7 +27,7 @@ class AdditionalTupleItemsException extends ValidationException
     ) {
         parent::__construct(
             sprintf(
-                'Tuple array %s contains not allowed additional items. Expected %s items, got %s',
+                "Tuple array '%s' contains not allowed additional items: expected %s items, got %s",
                 $propertyName,
                 $this->expectedAmount,
                 $this->amount

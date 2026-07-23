@@ -26,7 +26,7 @@ class MaxItemsException extends ValidationException
         protected int $count,
     ) {
         parent::__construct(
-            "Array $propertyName must not contain more than $this->maxItems items, $this->count items provided",
+            "Array '$propertyName' must not contain more than {$this->maxItems} items",
             $propertyName,
             $providedValue,
             $jsonPointer

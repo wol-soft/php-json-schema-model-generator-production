@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Exception\Generic;
 
+use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
 /**
@@ -23,9 +24,11 @@ class InvalidTypeException extends ValidationException
     {
         parent::__construct(
             sprintf(
-                'Invalid type for %s. Requires %s, got %s',
+                "Invalid type for '%s': requires %s, got '%s'",
                 $propertyName,
-                is_array($this->expectedType) ? '[' . join(', ', $this->expectedType) . ']' : $this->expectedType,
+                is_array($this->expectedType)
+                    ? '[' . MessageFormatter::quotedList($this->expectedType) . ']'
+                    : "'{$this->expectedType}'",
                 is_object($providedValue) ? $providedValue::class : gettype($providedValue)
             ),
             $propertyName,
