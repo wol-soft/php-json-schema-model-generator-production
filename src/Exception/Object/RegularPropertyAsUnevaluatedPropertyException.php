@@ -21,7 +21,11 @@ class RegularPropertyAsUnevaluatedPropertyException extends ValidationException
         private readonly string $class,
     ) {
         parent::__construct(
-            "Couldn't add regular property $propertyName as unevaluated property to object {$this->class}",
+            sprintf(
+                "Could not add regular property '%s' as an unevaluated property of object '%s'",
+                $propertyName,
+                $this->class,
+            ),
             $propertyName,
             $providedValue,
             $jsonPointer,

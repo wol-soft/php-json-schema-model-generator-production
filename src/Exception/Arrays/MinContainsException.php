@@ -17,7 +17,7 @@ class MinContainsException extends ValidationException
     ) {
         parent::__construct(
             sprintf(
-                'Array %s must not contain less than %d items matching the contains constraint,'
+                "Array '%s' must not contain less than %d items matching the contains constraint,"
                     . ' %s matching items provided',
                 $propertyName,
                 $this->minContains,

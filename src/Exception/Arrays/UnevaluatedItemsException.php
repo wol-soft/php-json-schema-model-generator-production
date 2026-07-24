@@ -30,7 +30,7 @@ class UnevaluatedItemsException extends ValidationException
         );
 
         parent::__construct(
-            "Provided JSON for $propertyName contains not allowed unevaluated items "
+            "Provided JSON for '$propertyName' contains not allowed unevaluated items "
                 . "[$formattedIndices]",
             $propertyName,
             $providedValue,
