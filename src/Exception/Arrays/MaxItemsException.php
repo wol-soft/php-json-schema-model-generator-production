@@ -18,8 +18,13 @@ class MaxItemsException extends ValidationException
      *
      * @param $providedValue
      */
-    public function __construct($providedValue, string $propertyName, string $jsonPointer, protected int $maxItems)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected int $maxItems,
+        protected int $count,
+    ) {
         parent::__construct(
             "Array '$propertyName' must not contain more than {$this->maxItems} items",
             $propertyName,
@@ -31,5 +36,10 @@ class MaxItemsException extends ValidationException
     public function getMaxItems(): int
     {
         return $this->maxItems;
+    }
+
+    public function getCount(): int
+    {
+        return $this->count;
     }
 }

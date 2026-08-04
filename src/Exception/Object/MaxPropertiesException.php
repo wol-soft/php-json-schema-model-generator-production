@@ -6,20 +6,15 @@ namespace PHPModelGenerator\Exception\Object;
 
 use PHPModelGenerator\Exception\ValidationException;
 
-/**
- * Class MinLengthException
- *
- * @package PHPModelGenerator\Exception\Object
- */
 class MaxPropertiesException extends ValidationException
 {
-    /**
-     * MaxPropertiesException constructor.
-     *
-     * @param $providedValue
-     */
-    public function __construct($providedValue, string $propertyName, string $jsonPointer, protected int $maxProperties)
-    {
+    public function __construct(
+        $providedValue,
+        string $propertyName,
+        string $jsonPointer,
+        protected int $maxProperties,
+        protected int $count,
+    ) {
         parent::__construct(
             "Provided object for '$propertyName' must not contain more than {$this->maxProperties} properties",
             $propertyName,
@@ -31,5 +26,10 @@ class MaxPropertiesException extends ValidationException
     public function getMaxProperties(): int
     {
         return $this->maxProperties;
+    }
+
+    public function getCount(): int
+    {
+        return $this->count;
     }
 }
