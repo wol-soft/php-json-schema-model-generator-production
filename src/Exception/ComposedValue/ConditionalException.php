@@ -77,10 +77,14 @@ class ConditionalException extends ValidationException
             $this->getExceptionMessage($this->thenException ?: $this->elseException);
     }
 
+    /**
+     * Collected errors and a single exception render the same bullets: bulletList() only joins the errors, the
+     * first bullet is prepended for both.
+     */
     private function getExceptionMessage(Exception $exception): string
     {
-        return $exception instanceof ErrorRegistryExceptionInterface
+        return "\n    * " . ($exception instanceof ErrorRegistryExceptionInterface
             ? MessageFormatter::bulletList($exception->getErrors())
-            : "\n    * " . str_replace("\n", "\n    ", $exception->getMessage());
+            : str_replace("\n", "\n    ", $exception->getMessage()));
     }
 }
