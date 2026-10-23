@@ -53,7 +53,8 @@ class ConditionalExceptionTest extends TestCase
         $expectedMessage = <<<'MESSAGE'
         Invalid value for 'root' declined by conditional composition constraint
           - Condition: Valid
-          - Conditional branch failed:Invalid value for 'kind' declined by composition constraint
+          - Conditional branch failed:
+            * Invalid value for 'kind' declined by composition constraint
               Requires to match one composition element but matched 0 elements
               - Composition element #1: Failed
                 * Value for 'kind' must be "a", got "zzz"
@@ -62,5 +63,52 @@ class ConditionalExceptionTest extends TestCase
         MESSAGE;
 
         $this->assertSame($expectedMessage, $conditional->getMessage());
+    }
+
+    /**
+     * Collected errors of the condition and of the failed branch (error collection mode) are rendered as bullets, each
+     * error on its own line - identical to a single exception (direct exception mode).
+     */
+    public function testCollectedErrorsAreRenderedAsBullets(): void
+    {
+        $conditionError = new InvalidConstException('x', 'kind', '/if/properties/kind/const', 'a');
+        $branchErrorA = new InvalidConstException('x', 'kind', '/else/properties/kind/const', 'b');
+        $branchErrorB = new InvalidConstException(1, 'amount', '/else/properties/amount/const', 2);
+
+        $conditionErrors = new ErrorRegistryException();
+        $conditionErrors->addError($conditionError);
+        $branchErrors = new ErrorRegistryException();
+        $branchErrors->addError($branchErrorA);
+        $branchErrors->addError($branchErrorB);
+
+        $collected = new ConditionalException(['kind' => 'x'], 'root', '/if', $conditionErrors, null, $branchErrors);
+
+        $this->assertSame(
+            <<<'MESSAGE'
+            Invalid value for 'root' declined by conditional composition constraint
+              - Condition: Failed
+                * Value for 'kind' must be "a", got "x"
+              - Conditional branch failed:
+                * Value for 'kind' must be "b", got "x"
+                * Value for 'amount' must be 2, got 1
+            MESSAGE,
+            $collected->getMessage(),
+        );
+
+        $collectedSingleBranchError = new ErrorRegistryException();
+        $collectedSingleBranchError->addError($branchErrorA);
+
+        $this->assertSame(
+            (new ConditionalException(['kind' => 'x'], 'root', '/if', $conditionError, null, $branchErrorA))
+                ->getMessage(),
+            (new ConditionalException(
+                ['kind' => 'x'],
+                'root',
+                '/if',
+                $conditionErrors,
+                null,
+                $collectedSingleBranchError,
+            ))->getMessage(),
+        );
     }
 }
