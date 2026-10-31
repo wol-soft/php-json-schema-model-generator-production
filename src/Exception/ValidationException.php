@@ -10,6 +10,7 @@ use Throwable;
 abstract class ValidationException extends JSONModelValidationException
 {
     private string $instancePointerSegment;
+    private string $nestedInstancePointerSegment;
     private ?ValidationException $instancePointerParent = null;
 
     /**
@@ -26,6 +27,7 @@ abstract class ValidationException extends JSONModelValidationException
         parent::__construct($message, $code, $previous);
 
         $this->instancePointerSegment = '/' . self::escapeInstancePointerSegment($propertyName);
+        $this->nestedInstancePointerSegment = $this->instancePointerSegment;
     }
 
     public function getPropertyName(): string
@@ -59,9 +61,7 @@ abstract class ValidationException extends JSONModelValidationException
      */
     public function getInstancePointer(): JsonPointer
     {
-        return new JsonPointer(
-            ($this->instancePointerParent?->getInstancePointer()->pointer ?? '') . $this->instancePointerSegment
-        );
+        return new JsonPointer($this->getEnclosingInstancePointer() . $this->instancePointerSegment);
     }
 
     /**
@@ -92,7 +92,8 @@ abstract class ValidationException extends JSONModelValidationException
      * exceptions bubble up from the point of failure to the root. Called by wrapping exceptions
      * (InvalidItemException, InvalidTupleException, InvalidAdditionalPropertiesException,
      * InvalidPatternPropertiesException, NestedObjectException, InvalidComposedValueException,
-     * ConditionalException) on the nested exceptions they collect.
+     * ConditionalException, InvalidSchemaDependencyException) on the nested exceptions they
+     * collect.
      *
      * Pass $segment when this exception's own propertyName is a placeholder shared by every
      * instance of an enclosing collection (an array item, an additional/pattern property) rather
@@ -107,6 +108,7 @@ abstract class ValidationException extends JSONModelValidationException
 
         if ($segment !== null) {
             $this->instancePointerSegment = '/' . self::escapeInstancePointerSegment((string) $segment);
+            $this->nestedInstancePointerSegment = $this->instancePointerSegment;
         }
     }
 
@@ -121,6 +123,31 @@ abstract class ValidationException extends JSONModelValidationException
     protected function suppressOwnInstancePointerSegment(): void
     {
         $this->instancePointerSegment = '';
+        $this->nestedInstancePointerSegment = '';
+    }
+
+    /**
+     * Keep this exception's own segment for its own pointer, but resolve the exceptions nested
+     * below it without that segment. For an exception which is located at a part of the value
+     * (e.g. the property which triggers a dependency) while the exceptions nested below it were
+     * raised for the enclosing value as a whole (the object owning that property): their pointers
+     * continue at the enclosing pointer instead of being appended to this exception's segment.
+     * Cleared again if a wrapper assigns the real position of the value via
+     * setInstancePointerParent().
+     */
+    protected function excludeOwnInstancePointerSegmentFromNestedErrors(): void
+    {
+        $this->nestedInstancePointerSegment = '';
+    }
+
+    private function getEnclosingInstancePointer(): string
+    {
+        return $this->instancePointerParent?->getNestedInstancePointerBase() ?? '';
+    }
+
+    private function getNestedInstancePointerBase(): string
+    {
+        return $this->getEnclosingInstancePointer() . $this->nestedInstancePointerSegment;
     }
 
     private static function escapeInstancePointerSegment(string $segment): string
