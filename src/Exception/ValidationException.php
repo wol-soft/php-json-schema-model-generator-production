@@ -7,19 +7,12 @@ namespace PHPModelGenerator\Exception;
 use PHPModelGenerator\Attributes\JsonPointer;
 use Throwable;
 
-/**
- * Class ValidationException
- *
- * @package PHPModelGeneratorException
- */
 abstract class ValidationException extends JSONModelValidationException
 {
     private string $instancePointerSegment;
     private ?ValidationException $instancePointerParent = null;
 
     /**
-     * ValidationException constructor.
-     *
      * @param int $code
      */
     public function __construct(
@@ -69,6 +62,29 @@ abstract class ValidationException extends JSONModelValidationException
         return new JsonPointer(
             ($this->instancePointerParent?->getInstancePointer()->pointer ?? '') . $this->instancePointerSegment
         );
+    }
+
+    /**
+     * Mark this exception as raised by a validator of a generated class itself (e.g. minProperties,
+     * additionalProperties: false or a composition keyword of an object). Such a validator runs
+     * inside the generated class and has no access to the name its parent used to reach the
+     * object, so the exception is constructed with the class name as property name. That name is
+     * a label for the message text only: it is not part of the instance pointer, neither of this
+     * exception nor of the exceptions nested below it. The pointer then continues at the enclosing
+     * exception's pointer (the object property, or the root for the object being validated).
+     *
+     * Intended to be called right after the construction, e.g. `(new MinPropertiesException(...))
+     * ->withPlaceholderPropertyName()`. A segment assigned afterwards by a wrapping exception (an
+     * array index, an additional/pattern property key) is the real location of the value and takes
+     * precedence; a segment assigned before this call is discarded. The exception classes are
+     * also used by validators of a property, where the property name is real and kept: do not
+     * call this method for those.
+     */
+    public function withPlaceholderPropertyName(): static
+    {
+        $this->suppressOwnInstancePointerSegment();
+
+        return $this;
     }
 
     /**
