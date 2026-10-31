@@ -7,19 +7,19 @@ namespace PHPModelGenerator\Exception\Object;
 use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
-/**
- * Class InvalidAdditionalPropertiesException
- *
- * @package PHPModelGenerator\Exception\Object
- */
 class InvalidAdditionalPropertiesException extends ValidationException
 {
     protected const MAIN_MESSAGE = "Provided JSON for '%s' contains invalid additional properties";
     protected const TYPE = 'additional property';
 
     /**
-     * InvalidAdditionalPropertiesException constructor.
-     *
+     * Whether the property name handed to the constructor is a label for the message text only
+     * instead of a real instance path segment. Subclasses validating a property which is reached
+     * under its own name override this to keep the name as the exception's instance pointer segment.
+     */
+    protected const PROPERTY_NAME_IS_PLACEHOLDER = true;
+
+    /**
      * @param $providedValue
      * @param ValidationException[][] $nestedExceptions
      */
@@ -33,11 +33,13 @@ class InvalidAdditionalPropertiesException extends ValidationException
 
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
 
-        // This exception validates the enclosing object's own additionalProperties/items
-        // constraint. $propertyName is the generated class name (a base validator has no access
-        // to the property name its parent used to reach this object) — a message-text label only,
-        // never a real instance-path segment.
-        $this->suppressOwnInstancePointerSegment();
+        // For the additionalProperties constraint of an object $propertyName is the generated class
+        // name (a base validator has no access to the property name its parent used to reach this
+        // object) - a message-text label only, never a real instance path segment. Additional tuple
+        // items are validated by the array property itself and keep the array's name instead.
+        if (static::PROPERTY_NAME_IS_PLACEHOLDER) {
+            $this->suppressOwnInstancePointerSegment();
+        }
     }
 
     /**

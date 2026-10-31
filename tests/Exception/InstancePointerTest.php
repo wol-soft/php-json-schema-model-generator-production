@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PHPModelGenerator\Tests\Exception;
 
+use PHPModelGenerator\Exception\Arrays\InvalidAdditionalTupleItemsException;
 use PHPModelGenerator\Exception\Arrays\InvalidItemException;
 use PHPModelGenerator\Exception\Arrays\InvalidTupleException;
 use PHPModelGenerator\Exception\Arrays\InvalidUnevaluatedItemsException;
@@ -264,6 +265,74 @@ class InstancePointerTest extends TestCase
 
         $this->assertSame('/extra', $additionalPropertiesException->getInstancePointer()->pointer);
         $this->assertSame('/extra/b', $additionalPropertyException->getInstancePointer()->pointer);
+    }
+
+    /**
+     * The root object has no name its own pointer could contribute: the class name handed to the
+     * exception is a message label only, so neither the exception nor its nested errors may carry
+     * it as a segment.
+     */
+    public function testAdditionalPropertiesOfTheRootObjectDoNotEmitTheClassNamePlaceholder(): void
+    {
+        $additionalPropertyException = new InvalidTypeException(
+            42,
+            'ClassPlaceholder',
+            '/additionalProperties/type',
+            'string',
+        );
+
+        $additionalPropertiesException = new InvalidAdditionalPropertiesException(
+            ['b' => 42],
+            'ClassPlaceholder',
+            '/additionalProperties',
+            ['b' => [$additionalPropertyException]],
+        );
+
+        $this->assertSame('', $additionalPropertiesException->getInstancePointer()->pointer);
+        $this->assertSame('/b', $additionalPropertyException->getInstancePointer()->pointer);
+    }
+
+    /**
+     * Unlike the additional properties of an object, additional tuple items are validated by the
+     * array property itself, so the exception receives the real array property name and has to
+     * keep it as its own segment. The key is the true index within the whole array (the tuple
+     * items are not subtracted).
+     */
+    public function testAdditionalTupleItemExceptionKeepsTheArrayNameAndUsesTheArrayIndex(): void
+    {
+        $additionalItemException = new InvalidTypeException('x', 'additional item', '/additionalItems/type', 'int');
+
+        $additionalTupleItemsException = new InvalidAdditionalTupleItemsException(
+            ['a', 1, 2, 'x'],
+            'pair',
+            '/properties/pair/additionalItems',
+            [3 => [$additionalItemException]],
+        );
+
+        $this->assertSame('/pair', $additionalTupleItemsException->getInstancePointer()->pointer);
+        $this->assertSame('/pair/3', $additionalItemException->getInstancePointer()->pointer);
+    }
+
+    public function testAdditionalTupleItemExceptionInsideArrayItemComposesItemIndexAndArrayIndex(): void
+    {
+        $additionalItemException = new InvalidTypeException('x', 'additional item', '/additionalItems/type', 'int');
+
+        $additionalTupleItemsException = new InvalidAdditionalTupleItemsException(
+            ['a', 1, 2, 'x'],
+            'pair',
+            '/properties/pair/items/additionalItems',
+            [3 => [$additionalItemException]],
+        );
+
+        new InvalidItemException(
+            [['a'], ['a', 1, 2, 'x']],
+            'pair',
+            '/properties/pair/items',
+            [1 => [$additionalTupleItemsException]],
+        );
+
+        $this->assertSame('/pair/1', $additionalTupleItemsException->getInstancePointer()->pointer);
+        $this->assertSame('/pair/1/3', $additionalItemException->getInstancePointer()->pointer);
     }
 
     public function testPatternPropertyExceptionIsPrefixedWithTheRealKeyNotTheClassNamePlaceholder(): void
