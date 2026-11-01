@@ -8,19 +8,13 @@ use PHPModelGenerator\Exception\ErrorRegistryExceptionInterface;
 use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
-/**
- * Class InvalidComposedValueException
- *
- * @package PHPModelGenerator\Exception\ComposedValue
- */
 abstract class InvalidComposedValueException extends ValidationException
 {
     protected const COMPOSED_ERROR_MESSAGE = '';
+
     /**
-     * InvalidComposedValueException constructor.
-     *
      * @param $providedValue
-     * @param ValidationException[][] $compositionErrorCollection
+     * @param ErrorRegistryExceptionInterface[] $compositionErrorCollection The errors of each composition branch
      */
     public function __construct(
         $providedValue,
@@ -29,16 +23,14 @@ abstract class InvalidComposedValueException extends ValidationException
         protected int $succeededCompositionElements,
         protected array $compositionErrorCollection
     ) {
-        // A composition branch validates the same value at the same position as the composition
-        // itself — it consumes no path segment of its own, so branch errors only need the parent
-        // link (not a segment replacement) to inherit wherever this composition ends up.
-        foreach ($this->compositionErrorCollection as $branch) {
-            foreach ($branch->getErrors() as $error) {
-                $error->setInstancePointerParent($this);
-            }
-        }
-
         parent::__construct($this->getErrorMessage($propertyName), $propertyName, $providedValue, $jsonPointer);
+
+        // A composition branch validates the same value at the same position as the composition
+        // itself: branch errors raised for the composed property consume no path segment of their
+        // own and inherit wherever this composition ends up, see linkBranchExceptions().
+        foreach ($this->compositionErrorCollection as $branch) {
+            $this->linkBranchExceptions($branch);
+        }
     }
 
     public function getSucceededCompositionElements(): int
@@ -47,7 +39,7 @@ abstract class InvalidComposedValueException extends ValidationException
     }
 
     /**
-     * @return ValidationException[][]
+     * @return ErrorRegistryExceptionInterface[]
      */
     public function getCompositionErrorCollection(): array
     {

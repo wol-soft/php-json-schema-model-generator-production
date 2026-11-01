@@ -7,18 +7,13 @@ namespace PHPModelGenerator\Exception\Arrays;
 use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
-/**
- * Class InvalidItemException
- *
- * @package PHPModelGenerator\Exception\Arrays
- */
 class InvalidItemException extends ValidationException
 {
     /**
-     * InvalidItemException constructor.
-     *
      * @param $providedValue
-     * @param ValidationException[][] $invalidItems
+     * @param ValidationException[][] $invalidItems Indexed by the 0-based index of the item in the array. In
+     *                                              contrast to InvalidTupleException the keys are used as is for
+     *                                              the instance pointer
      */
     public function __construct(
         $providedValue,
@@ -36,7 +31,7 @@ class InvalidItemException extends ValidationException
     }
 
     /**
-     * @return ValidationException[][]
+     * @return ValidationException[][] Indexed by the 0-based index of the item in the array
      */
     public function getInvalidItems(): array
     {
