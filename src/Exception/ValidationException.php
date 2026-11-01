@@ -99,8 +99,9 @@ abstract class ValidationException extends JSONModelValidationException
      * instance of an enclosing collection (an array item, an additional/pattern property) rather
      * than this value's real position — it replaces the auto-seeded segment with the caller's
      * actual position (an array index, the real property key). Omit it when this exception's own
-     * propertyName is already a real, distinct name (composition branches, conditional branches,
-     * and nested object properties all keep their own name and only need the parent link).
+     * propertyName is already a real, distinct name (the properties of a nested object keep their
+     * own name and only need the parent link). The exceptions of composition branches are linked
+     * via linkBranchExceptions().
      */
     public function setInstancePointerParent(ValidationException $parent, int|string|null $segment = null): void
     {
@@ -109,6 +110,42 @@ abstract class ValidationException extends JSONModelValidationException
         if ($segment !== null) {
             $this->instancePointerSegment = '/' . self::escapeInstancePointerSegment((string) $segment);
             $this->nestedInstancePointerSegment = $this->instancePointerSegment;
+        }
+    }
+
+    /**
+     * Link the exceptions of a composition branch (a single exception or all errors of an error
+     * registry) to this composition exception. A branch validates the same value as the
+     * composition, and its validators raise their exceptions with the name of the composed
+     * property. A branch exception with the same name as this exception is therefore located at
+     * this exception's location and must not append its own, identical segment again (/name,
+     * not /name/name); the exceptions nested below it follow (an item of a composed array is
+     * located at /tags/0, not at /tags/tags/0). A branch exception with a different name is a
+     * property of the composed object and keeps its segment (/obj/b).
+     *
+     * Deciding by the name instead of suppressing every branch exception is required for the
+     * properties of an object: their distinct names are the only thing locating them. The
+     * name check happens here, not in the branch exception itself, as that cannot know that it is
+     * a branch. The comparison is not able to tell a branch exception from the exception
+     * of an object property which carries the same name as this exception (a composition of a
+     * generated class, named after the class, with a property named like the class).
+     *
+     * Call after the construction of this exception, the property name is required.
+     */
+    protected function linkBranchExceptions(?Throwable $branchException): void
+    {
+        $branchErrors = match (true) {
+            $branchException instanceof ErrorRegistryExceptionInterface => $branchException->getErrors(),
+            $branchException instanceof ValidationException => [$branchException],
+            default => [],
+        };
+
+        foreach ($branchErrors as $branchError) {
+            $branchError->setInstancePointerParent($this);
+
+            if ($branchError->getPropertyName() === $this->propertyName) {
+                $branchError->suppressOwnInstancePointerSegment();
+            }
         }
     }
 
