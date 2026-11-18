@@ -7,18 +7,12 @@ namespace PHPModelGenerator\Exception\Arrays;
 use PHPModelGenerator\Exception\MessageFormatter;
 use PHPModelGenerator\Exception\ValidationException;
 
-/**
- * Class InvalidTupleException
- *
- * @package PHPModelGenerator\Exception\Arrays
- */
 class InvalidTupleException extends ValidationException
 {
     /**
-     * InvalidTupleException constructor.
-     *
      * @param $providedValue
-     * @param ValidationException[][] $invalidTuples
+     * @param ValidationException[][] $invalidTuples Indexed by the 1-based position of the tuple element in
+     *                                               the array (the first element has the key 1)
      */
     public function __construct(
         $providedValue,
@@ -26,9 +20,12 @@ class InvalidTupleException extends ValidationException
         string $jsonPointer,
         protected array $invalidTuples
     ) {
-        foreach ($this->invalidTuples as $tupleIndex => $exceptions) {
+        foreach ($this->invalidTuples as $tuplePosition => $exceptions) {
             foreach ($exceptions as $exception) {
-                $exception->setInstancePointerParent($this, $tupleIndex);
+                // The keys are 1-based positions (also used for the "#<position>" label of the message) whereas an
+                // instance pointer addresses the 0-based array index. Passing the key as is would point at the
+                // following element.
+                $exception->setInstancePointerParent($this, $tuplePosition - 1);
             }
         }
 
@@ -36,7 +33,7 @@ class InvalidTupleException extends ValidationException
     }
 
     /**
-     * @return ValidationException[][]
+     * @return ValidationException[][] Indexed by the 1-based position of the tuple element in the array
      */
     public function getInvalidTuples(): array
     {
@@ -46,8 +43,8 @@ class InvalidTupleException extends ValidationException
     protected function getErrorMessage(string $propertyName): string
     {
         $output = "Invalid tuple item in array '$propertyName':";
-        foreach ($this->invalidTuples as $tupleIndex => $exceptions) {
-            $output .= "\n  - invalid tuple #$tupleIndex\n    * " . MessageFormatter::bulletList($exceptions);
+        foreach ($this->invalidTuples as $tuplePosition => $exceptions) {
+            $output .= "\n  - invalid tuple #$tuplePosition\n    * " . MessageFormatter::bulletList($exceptions);
         }
 
         return $output;
